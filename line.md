@@ -684,8 +684,29 @@ echo "BASE_URL=https://${BASE_HOSTNAME}" >> frontend/.env
 
 #### 2-5-3-1-2 Azure Static Web Appsのデプロイ
 
-1. [Azure Static Web Apps CLI](https://github.com/Azure/static-web-apps-cli)をインストールする。
+1. [Azure Static Web Apps CLI](https://github.com/Azure/static-web-apps-cli)をインストールして、初期化を行います。
 
 ```bash
-npm install -D @azure/static-web-apps-cli
+npx @azure/static-web-apps-cli init
 ```
+
+Global インストールしちゃったほうが楽かも。
+
+<!-- ローカルで実行する場合は以下のコマンドを実行する。
+
+```bash
+npx @azure/static-web-apps-cli start ./frontend --api-location ./backend
+```
+
+Node.js v20.10.0 で実行したところ
+> ✖ Found Azure Functions Core Tools v4 which is incompatible with your current Node.js v20.10.0.
+> ✖ See https://aka.ms/functions-node-versions for more information.
+となったため`Node.js v18.19.0`で実行します。 -->
+
+2. デプロイを行います。
+
+```bash
+deployment_token=<デプロイトークン>
+# deployment_token=$(az staticwebapp secrets list --name <application-name> --query "properties.apiKey" -o tsv)
+npx @azure/static-web-apps-cli deploy --app ./frontend --api ./backend --output-location dist --token ${deployment_token}
+``` 
