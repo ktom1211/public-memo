@@ -697,7 +697,7 @@ az rest --method get --url "$($staticAppId)?api-version=2020-06-01" --query 'hos
 5. パイプラインの実行
     - `az pipelines run --name <パイプライン名>`
 
-#### 2-5-3-1 ローカルからのデプロイ
+##### 2-5-3-1 ローカルからのデプロイ
 
 Azure Piplinesが無料枠の申請が必要なため、ローカルで実行する場合は以下の手順を実施する。
 
@@ -706,7 +706,7 @@ Azure Piplinesが無料枠の申請が必要なため、ローカルで実行す
 [NextjsでSSGをしてSWA CLIを使って、Azure Static Web Appsに簡単デプロイ（ローカル上でSSG確認する方法付き）](https://qiita.com/fsdg-takada/items/ff64bc0d46bc2e2a470b)
 [Azure Static Web Apps の CLI を使ってローカル開発を試してみた](https://zenn.dev/microsoft/articles/static-web-apps-cli-getting-start#azure-static-web-apps)
 
-#### 2-5-3-1-1 環境変数の設定
+###### 2-5-3-1-1 環境変数の設定
 
 ```bash
 export LIFF_ID=<LIFFアプリID>
@@ -716,7 +716,7 @@ echo "LIFF_ID=${LIFF_ID}" > frontend/.env
 echo "BASE_URL=https://${BASE_HOSTNAME}" >> frontend/.env
 ```
 
-#### 2-5-3-1-2 Azure Static Web Appsのデプロイ
+###### 2-5-3-1-2 Azure Static Web Appsのデプロイ
 
 1. [Azure Static Web Apps CLI](https://github.com/Azure/static-web-apps-cli)をインストールして、初期化を行います。
 
@@ -756,9 +756,9 @@ deployment_token=<デプロイトークン>
 npx @azure/static-web-apps-cli deploy --app-location ./frontend --api-location ./backend --output-location dist --deployment-token ${deployment_token}
 ``` 
 
-#### 2-5-3-2 [Azureへデプロイしたバックエンドの設定と初期データの投入](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/backend-deployment.md)
+##### 2-5-3-2 [Azureへデプロイしたバックエンドの設定と初期データの投入](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/backend-deployment.md)
 
-#### 2-5-3-2-1 環境変数の設定
+##### 2-5-3-2-1 環境変数の設定
 
 ```bash
 az staticwebapp appsettings set --name <Azure Static Web Appsのアプリ名> --setting-names \
@@ -768,7 +768,7 @@ az staticwebapp appsettings set --name <Azure Static Web Appsのアプリ名> --
   LinePayOptions__ChannelSecret=<LINE Payのチャネルシークレット>
 ```
 
-#### 2-5-3-2-2 Cosmos DBへのマスタデータ登録
+##### 2-5-3-2-2 Cosmos DBへのマスタデータ登録
 
 1. ファイアウォール設定の変更
 
@@ -886,4 +886,20 @@ lineChannelに追加するデータのテンプレート
     "updatedTime": "2021-01-01T00:00:00.0000000+00:00"
 }
 ```
+
+#### 2-5-4 LINE Developersコンソールの設定
+
+
+##### 2-5-4-1 [LIFFエンドポイントの設定](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/validation.md#liff%E3%82%A8%E3%83%B3%E3%83%89%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88%E3%81%AE%E8%A8%AD%E5%AE%9A)
+
+【LINEチャネルの作成 -> LIFFアプリの追加】にて作成したLIFFアプリのエンドポイントURLを設定します。
+
+1. [LINE Developersコンソール](https://developers.line.biz/console/)にて、LINEログインチャンネルの画面の[LIFE]タブをクリックしてLIFEアプリ一覧を表示します。
+2. 作成したLIFEアプリをクリックします。
+3. [エンドポイントURL]に`https://<Azure Static Web Appsのホスト名>`を設定します。
+
+##### 2-5-4-2 [リッチメニューの設定](https://developers.line.biz/ja/docs/messaging-api/using-rich-menus/)
+
+ToDo
+
 
