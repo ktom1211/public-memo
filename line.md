@@ -887,8 +887,10 @@ lineChannelに追加するデータのテンプレート
 }
 ```
 
-#### 2-5-4 LINE Developersコンソールの設定
+#### 2-5-4 動作確認
 
+以下の設置を行った後に、動作確認を行います。
+すべての手順が完了後、LIFF URLにアクセスし、動作を確認してください。
 
 ##### 2-5-4-1 [LIFFエンドポイントの設定](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/validation.md#liff%E3%82%A8%E3%83%B3%E3%83%89%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88%E3%81%AE%E8%A8%AD%E5%AE%9A)
 
