@@ -755,3 +755,19 @@ deployment_token=<デプロイトークン>
 # deployment_token=$(az staticwebapp secrets list --name <application-name> --query "properties.apiKey" -o tsv)
 npx @azure/static-web-apps-cli deploy --app-location ./frontend --api-location ./backend --output-location dist --deployment-token ${deployment_token}
 ``` 
+
+#### 2-5-3-2 [Azureへデプロイしたバックエンドの設定と初期データの投入](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/backend-deployment.md)
+
+1. 環境変数の設定
+
+```bash
+# アプリケーションのリソースIDを取得
+app_resource_id=$(az staticwebapp list --query "[?name=='<Azure Static Web Appsのアプリ名>'].id" --output tsv)
+
+# 環境変数を設定
+az staticwebapp appsettings set --name $app_resource_id --setting-names \
+  LineOptions__ChannelId=<Messaging APIチャネルのチャネルID> \
+  LineOptions__LoginChannelId=<LINEログインチャネルのチャネルID> \
+  LinePayOptions__ChannelId=<LINE PayのチャネルID> \
+  LinePayOptions__ChannelSecret=<LINE Payのチャネルシークレット>
+```
