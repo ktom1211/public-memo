@@ -758,7 +758,7 @@ npx @azure/static-web-apps-cli deploy --app-location ./frontend --api-location .
 
 #### 2-5-3-2 [Azureへデプロイしたバックエンドの設定と初期データの投入](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/backend-deployment.md)
 
-1. 環境変数の設定
+#### 2-5-3-2-1 環境変数の設定
 
 ```bash
 az staticwebapp appsettings set --name <Azure Static Web Appsのアプリ名> --setting-names \
@@ -767,3 +767,123 @@ az staticwebapp appsettings set --name <Azure Static Web Appsのアプリ名> --
   LinePayOptions__ChannelId=<LINE PayのチャネルID> \
   LinePayOptions__ChannelSecret=<LINE Payのチャネルシークレット>
 ```
+
+#### 2-5-3-2-2 Cosmos DBへのマスタデータ登録
+
+1. ファイアウォール設定の変更
+
+```bash
+# Cosmos DBアカウント名とリソースグループ名を設定
+# Cosmos DBアカウント名はAzure Cosmos DBインスタンスを識別し、アクセスするために使用される。
+# Azure Cosmos DBのURLの一部としても使用される。
+# https://${cosmosdb_account}.documents.azure.com:443/ 
+cosmosdb_account="<Cosmos DBアカウント名>"
+resource_group="<リソースグループ名>"
+
+# ファイアウォール設定を更新
+# 結構時間がかかる
+az cosmosdb update --name $cosmosdb_account --resource-group $resource_group --ip-range-filter "<作業元のIPアドレス>"
+```
+
+2. データベースとコンテナの作成
+
+```bash
+# データベースの作成
+db_name=LineApiUseCaseSmartRetail
+az cosmosdb sql database create --account-name $cosmosdb_account --resource-group $resource_group --name $db_name
+
+# コンテナの作成
+# スラッシュで始まるテキストが勝手に、Windowsのパスに変換されて補われてしまう問題があるため、MSYS_NO_PATHCONV=1を設定する。
+export MSYS_NO_PATHCONV=1
+az cosmosdb sql container create --account-name $cosmosdb_account --resource-group $resource_group --database-name $db_name --name coupons --partition-key-path "/couponId"
+az cosmosdb sql container create --account-name $cosmosdb_account --resource-group $resource_group --database-name $db_name --name items --partition-key-path "/barcode"
+az cosmosdb sql container create --account-name $cosmosdb_account --resource-group $resource_group --database-name $db_name --name lineChannel --partition-key-path "/channelId"
+```
+
+| コンテナ名 | pk |
+| --- | --- |
+| coupons | /couponId |
+| items | /barcode |
+| lineChannel | /channelId |
+
+3. データの追加
+Azure CLIでは直接Cosmos DBにデータを追加する機能は提供されていないようなので、[Cosmos DBのデータエクスプローラー](https://docs.microsoft.com/ja-jp/azure/cosmos-db/data-explorer)を使用してデータを追加します。
+データの追加はコンテナ配下の[items]を選択し、[New Item]から新規レコードを作成します。
+
+couponsに追加するデータ
+
+```json
+{
+  "barcode": "4956022006116",
+  "couponDescription": "【感謝価格】すいか20%割引",
+  "couponId": "watermelon_coupon",
+  "deleted": "",
+  "discountEndDatetime": "2022-12-31 23:59:000",
+  "discountRate": 20,
+  "discountStartDatetime": "2021-04-01 00:00:000",
+  "discountWay": 2,
+  "imageUrl": "https://media.istockphoto.com/vectors/watermelon-icon-in-trendy-flat-style-isolated-on-white-background-vector-id877064160?s=612x612",
+  "itemName": "すいか",
+  "remarks": "すいか１点につき、20円引きとなります。"
+}
+```
+
+itemsに追加するデータ
+
+```json
+{
+  "barcode": "4956022006116",
+  "imageUrl": "https://media.istockphoto.com/vectors/watermelon-icon-in-trendy-flat-style-isolated-on-white-background-vector-id877064160?s=612x612",
+  "itemName": "すいか",
+  "itemPrice": 100
+}
+```
+
+```json
+{
+  "barcode": "1230059783947",
+  "imageUrl": "https://media.gettyimages.com/vectors/stack-of-books-vector-id504374218?s=2048x2048",
+  "itemName": "書籍",
+  "itemPrice": 100
+}
+```
+
+```json
+{
+  "barcode": "2130627341496",
+  "imageUrl": "https://media.gettyimages.com/vectors/tomato-flat-design-vegetable-icon-vector-id1017915086?s=2048x2048",
+  "itemName": "とまと",
+  "itemPrice": 50
+}
+```
+
+```json
+{
+  "barcode": "8358328475935",
+  "imageUrl": "https://media.gettyimages.com/vectors/stack-of-books-vector-id504374218?s=2048x2048",
+  "itemName": "書籍",
+  "itemPrice": 100
+}
+```
+
+```json
+{
+  "barcode": "84895769",
+  "imageUrl": "https://media.istockphoto.com/vectors/simple-apple-in-flat-style-vector-illustration-vector-id1141529240?s=612x612",
+  "itemName": "りんご",
+  "itemPrice": 50
+}
+```
+
+lineChannelに追加するデータのテンプレート
+
+```json
+{
+    "channelId": "Messaging APIチャネルのチャネルID",
+    "channelSecret": "Messaging APIチャネルのチャネルシークレット",
+    "channelAccessToken": "Messaging APIチャネルのチャネルトークン",
+    "limitDate": "2021-01-01T00:00:00.0000000+00:00",
+    "updatedTime": "2021-01-01T00:00:00.0000000+00:00"
+}
+```
+
