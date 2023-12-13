@@ -418,12 +418,32 @@ dotnet new gitignore
 
 Node.js v18.19.0 で動作確認を行う。
 
-Node Sass から Dart Sass への移行を行う。
+1. Node Sass から Dart Sass への移行を行う。
 
 ```bash
 cd frontend
 npm uninstall node-sass
 npm install sass
+```
+
+2. OpenSSL互換エラーの対応を行う。
+
+Node.js 17以降で導入されたOpenSSL 3.0の変更により、一部の暗号化関連の機能がサポートされなくなったため、そのままではビルドが通らない。
+本当はNode.js 18対応のバージョン上げたほうがいいけども（Nuxt 17.2？未検証）、環境変数の設定で対応する。
+
+```bash
+npm install --save--dev cross-env
+```
+
+```json:pacakge.json
+{
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider nuxt",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider nuxt build",
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider nuxt start",
+    "generate": "cross-env NODE_OPTIONS=--openssl-legacy-provider nuxt generate"
+  }
+}
 ```
 
 ### 2-4 [ラインチャンネルの作成](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/liff-channel-create.md)
@@ -723,10 +743,6 @@ Node.js v20.10.0 で実行したところ
 cd frontend
 
 npm install
-
-# Node.js 17以降で導入されたOpenSSL 3.0の変更により、一部の暗号化関連の機能がサポートされなくなったため、そのままではビルドが通らない。
-# 本当はNode.js 18対応のバージョン上げたほうがいいけども（Nuxt 17.2？未検証）。
-export NODE_OPTIONS=--openssl-legacy-provider
 npm run build
 ```
 
