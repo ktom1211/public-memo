@@ -393,7 +393,9 @@ https://liff.line.me/123456-abcedfg/shop?search=shoes#item10
 git clone https://github.com/line/line-api-use-case-smart-retail-azure.git
 ```
 
-### 2-3 バックエンド環境の.NETのバージョンを上げる
+### 2-3 バージョンを上げる
+
+#### 2-3-1 バックエンド環境の.NETのバージョンを上げる
 
 バックエンドの環境が.Net Core 3.1になっているので、最新の.Net 7に変更する。
 アップグレードには[.NET Upgrade Assistant](https://learn.microsoft.com/ja-jp/dotnet/core/porting/upgrade-assistant-overview)を使用した。
@@ -410,6 +412,18 @@ git clone https://github.com/line/line-api-use-case-smart-retail-azure.git
 ```powershell
 cd backend
 dotnet new gitignore
+```
+
+#### 2-3-2 フロントエンド環境のNode.jsのバージョンを上げる
+
+Node.js v18.19.0 で動作確認を行う。
+
+Node Sass から Dart Sass への移行を行う。
+
+```bash
+cd frontend
+npm uninstall node-sass
+npm install sass
 ```
 
 ### 2-4 [ラインチャンネルの作成](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/liff-channel-create.md)
@@ -703,10 +717,23 @@ Node.js v20.10.0 で実行したところ
 > ✖ See https://aka.ms/functions-node-versions for more information.
 となったため`Node.js v18.19.0`で実行します。 -->
 
-2. デプロイを行います。
+2. フロントエンドのビルドを行います。
+
+```bash
+cd frontend
+
+npm install
+
+# Node.js 17以降で導入されたOpenSSL 3.0の変更により、一部の暗号化関連の機能がサポートされなくなったため、そのままではビルドが通らない。
+# 本当はNode.js 18対応のバージョン上げたほうがいいけども（Nuxt 17.2？未検証）。
+export NODE_OPTIONS=--openssl-legacy-provider
+npm run build
+```
+
+3. デプロイを行います。
 
 ```bash
 deployment_token=<デプロイトークン>
 # deployment_token=$(az staticwebapp secrets list --name <application-name> --query "properties.apiKey" -o tsv)
-npx @azure/static-web-apps-cli deploy --app ./frontend --api ./backend --output-location dist --token ${deployment_token}
+npx @azure/static-web-apps-cli deploy --app-location ./frontend --api-location ./backend --output-location dist --deployment-token ${deployment_token}
 ``` 
