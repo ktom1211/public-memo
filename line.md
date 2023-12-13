@@ -743,7 +743,8 @@ Node.js v20.10.0 で実行したところ
 cd frontend
 
 npm install
-npm run build
+# https://v2.nuxt.com/deployments/azure-static-web-apps/
+npm run generate
 
 cd..
 ```
@@ -753,7 +754,7 @@ cd..
 ```bash
 deployment_token=<デプロイトークン>
 # deployment_token=$(az staticwebapp secrets list --name <Azure Static Web Appsのアプリ名> --query "properties.apiKey" -o tsv)
-npx @azure/static-web-apps-cli deploy --env production --deployment-token ${deployment_token}　
+npx @azure/static-web-apps-cli deploy --env production --deployment-token ${deployment_token}
 ``` 
 
 ##### 2-5-3-2 [Azureへデプロイしたバックエンドの設定と初期データの投入](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/backend-deployment.md)
