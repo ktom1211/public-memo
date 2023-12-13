@@ -761,11 +761,7 @@ npx @azure/static-web-apps-cli deploy --app-location ./frontend --api-location .
 1. 環境変数の設定
 
 ```bash
-# アプリケーションのリソースIDを取得
-app_resource_id=$(az staticwebapp list --query "[?name=='<Azure Static Web Appsのアプリ名>'].id" --output tsv)
-
-# 環境変数を設定
-az staticwebapp appsettings set --name $app_resource_id --setting-names \
+az staticwebapp appsettings set --name <Azure Static Web Appsのアプリ名> --setting-names \
   LineOptions__ChannelId=<Messaging APIチャネルのチャネルID> \
   LineOptions__LoginChannelId=<LINEログインチャネルのチャネルID> \
   LinePayOptions__ChannelId=<LINE PayのチャネルID> \
