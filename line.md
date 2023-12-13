@@ -1,0 +1,691 @@
+# LINE ミニアプリ
+
+[LINEミニアプリ](https://developers.line.biz/ja/services/line-mini-app/)についての調査メモです。
+
+[LINEミニアプリとは](https://developers.line.biz/ja/docs/line-mini-app/discover/introduction/)
+
+> LINEミニアプリは、[LIFF（LINE Front-end Framework）](https://developers.line.biz/ja/docs/liff/)上で実行されるウェブアプリです。LINEミニアプリを使えば、ユーザーはアプリをインストールしなくてもサービスを利用できます。
+> LINEミニアプリはウェブアプリですので、HTML5のほとんどの仕様が使用できます。詳しくは、「[仕様](https://developers.line.biz/ja/docs/line-mini-app/discover/specifications/)」を参照してください。
+
+> LINEミニアプリは[LINEミニアプリポリシー (opens new window)](https://terms2.line.me/LINE_MINI_App?lang=ja)における「本サービスのご利用対象者」であれば、どなたでも開発することができます。
+
+> 本サービスのご利用対象者
+> - 日本の法人番号、または台湾やタイの納税番号がある組織
+> - 日本の個人事業主
+
+## 1 開発前の調査メモ
+
+### 1-1 [仕様](https://developers.line.biz/ja/docs/line-mini-app/discover/specifications/)
+
+> LINEミニアプリは、[LIFFアプリ](https://developers.line.biz/ja/docs/liff/overview/)の一種です。そのため、LINEミニアプリの対応するOSバージョンとLINEバージョンは、LIFFの推奨環境に準拠しています。
+
+#### 1-1-1 推奨環境
+
+- iOS：最新バージョン。WKWebViewが使用されます。
+- Android：最新バージョン。Android WebViewが使用されます。
+- LINE：最新バージョン
+
+>  LIFFアプリは、OS、LINEともに最新バージョンの環境での利用を推奨します
+
+#### 1-1-2 HTML5サポート
+
+> LINEミニアプリを開発する場合は、HTML5のほとんどの仕様を使用できます。たとえば、Geolocation APIを使用して、ユーザーの位置情報を取得し、近くの店舗の情報をユーザーに提供できます。Google Maps APIなど、HTML5と互換性のあるほとんどのMap APIも使用できます。
+
+#### 1-1-3 LINEミニアプリの構造
+
+[LINEミニアプリの構造](https://developers.line.biz/ja/docs/line-mini-app/discover/introduction/#what-does-line-mini-app-look-like)
+
+> LINEミニアプリのページは、（A）ヘッダーおよび（B）ボディで構成されています。詳しくは、「[LINEミニアプリの構造](https://developers.line.biz/ja/docs/line-mini-app/discover/ui-components/)」を参照してください。
+
+![LINEミニアプリの構造](https://developers.line.biz/assets/img/mini_concept.47451080.png)
+
+##### 1-1-3-1 ヘッダー
+
+> LINEミニアプリのヘッダーは、プラットフォームネイティブのコンポーネントが使用されており、LINEが自動生成します。ヘッダーは、以下のコンポーネントで構成されています。
+
+1. サービス名
+    - LINEミニアプリのページで指定した`<title>`要素が表示されます。フォントは設定できません。
+2. アクションボタン
+    - タップすると、ユーザーがLINEミニアプリのページを友だちとシェアしたり、ユーザーのKeepに保存したり、ページをリロードするためのオプションが表示されます。オプションのテキストは設定できません。
+3. 閉じるボタン
+    - LINEミニアプリを閉じます。
+4. 戻るボタン
+    - 前のページを表示します。
+5. ローディングバー
+    - 現在のページの読み込み状況を表示します。
+
+![LINEミニアプリのヘッダー](https://developers.line.biz/assets/img/mini_uicomp_header.f3ca54a7.png)
+
+> ヘッダーでは、標準で以下の色が使用されます。
+> 背景：白
+> テキストおよびボタンのラベル：黒
+> ヘッダーの背景色をブランドカラーに変更できます。 LINE Developersコンソールの［LIFF］タブで、「ヘッダー背景色」に16進数カラーコード（例：#00c300）を入力してください。
+
+##### 1-1-3-2 ボディ
+
+> ボディはWebViewが使用されています。HTML5およびLIFFを活用して、サービスごとに開発してください
+
+#### 1-1-4 LINEミニアプリの機能
+
+##### 1-1-4-1 ビルトイン機能
+
+- アクションボタン
+    - シェア
+        - 現在開いているページをLINEメッセージでシェアします。
+    - 閲覧中のページを最小化
+        - [LIFFブラウザを最小化](https://developers.line.biz/ja/docs/liff/minimizing-liff-browser/)します。
+    - サービス提供元の詳細を見る
+        - [プロバイダーページ](https://developers.line.biz/ja/docs/partner-docs/provider-page/)を表示します。
+    - 更新
+        - 現在開いているページを再読み込みします。
+- チャンネル同意画面
+    - チャネル同意画面は、ユーザーが初めてLINEミニアプリを利用するときに表示されます。チャネル同意画面では、LINEミニアプリごとにアクセス権限を付与するかどうかをユーザーに確認します。
+    - すべてのLINEミニアプリはデフォルトで以下の権限を要求します。
+        - ユーザーのプロフィール情報を取得する権限
+        - トークへのメッセージを送信する権限
+    - チャネル同意画面では、LINEヤフー株式会社によって承認された権限のみを、ユーザーに要求できます。 LINE DevelopersコンソールのLINEミニアプリチャネルの設定で、ユーザーに権限を要求する項目を指定できます。
+
+##### 1-1-4-2 カスタム機能
+
+- サービスメッセージ
+    - サービスメッセージは、ユーザーからのリクエストに対する確認や応答としてユーザーが知るべき情報を、LINEミニアプリから通知する機能です。
+    - [サービスメッセージを送信する](https://developers.line.biz/ja/docs/line-mini-app/develop/service-messages/)
+    - [サービスメッセージの条件](https://developers.line.biz/ja/docs/line-mini-app/service/service-operation/#conditions-for-service-messages)
+- ユーザーをLINE公式アカウントの友だち追加へ誘導する
+    - LINEミニアプリでは、友だち追加オプションを使って、チャネル同意画面、もしくはアクセス許可要求画面からLINE公式アカウントの友だち追加への誘導ができます。
+    - [LINEミニアプリをはじめて開いたときにLINE公式アカウントを友だち追加する（友だち追加オプション）](https://developers.line.biz/ja/docs/line-mini-app/service/line-mini-app-oa/#link-a-line-official-account-with-your-channel)
+- 決済システムの利用
+    - LINE Payだけでなく、クレジットカードなどの支払い方法をLINEミニアプリに統合できます。
+    - [決済システムを利用する](https://developers.line.biz/ja/docs/line-mini-app/develop/payment/)
+- [カスタムアクションボタン](https://developers.line.biz/ja/docs/line-mini-app/develop/share-messages/)
+- [LINE Profile+](https://developers.line.biz/ja/docs/partner-docs/line-profile-plus/)
+    - LINEミニアプリでは、名前、性別、生年月日、電話番号、住所などのユーザー情報を取得してサービスに利用することができます。
+    - この機能は、所定の申請等を行った法人ユーザーのみが利用可能です。
+
+##### 1-1-4-3 LIFFアプリにできてLINEミニアプリでできないこと
+
+- 外部ブラウザによる表示
+    - 外部ブラウザでLINEミニアプリを開くとLINEミニアプリをスマートフォン版LINE（LIFFブラウザ）で開くように案内されます。
+- アクションボタンの非表示（モジュールモード）
+    - LINEミニアプリでは、[アクションボタン](https://developers.line.biz/ja/docs/line-mini-app/discover/builtin-features/#action-button)を非表示にすることはできません。LINEミニアプリチャネルに追加されているLIFFアプリでは、［モジュールモード］は設定できません。
+
+#### 1-1-5 [パフォーマンスガイドライン](https://developers.line.biz/ja/docs/line-mini-app/develop/performance-guidelines/)
+
+> LINEヤフー株式会社では、以下のスコアを満たすことを推奨しています。
+
+| パフォーマンス計測ツール | スコア |
+| ---- | ---- |
+| [Lighthouse](https://developer.chrome.com/docs/lighthouse/overview/) | Performance: 50以上 |
+
+> - LINEログインが実行されない状態で計測してください。LINEログインが実行されると、LINEログインのページのパフォーマンスが計測され、LINEミニアプリのパフォーマンスは計測されません。
+> - プロダクション環境（本番環境）で計測してください。スコアは、ネットワーク環境などの影響を受ける場合があります。
+
+#### 1-1-6 [開発ガイドライン](https://developers.line.biz/ja/docs/line-mini-app/development-guidelines/)
+
+> LINEミニアプリを使ったウェブアプリを開発する際は、以下の開発ガイドラインに従ってください。
+> - LINEプラットフォームへの大量リクエストの禁止
+> - ログ保存の推奨
+> LINEミニアプリはLIFFで提供される仕組みを利用しています。そのため、『LIFFドキュメント』の「[LIFFアプリ開発ガイドライン](https://developers.line.biz/ja/docs/liff/development-guidelines/)」の内容にも従ってください。
+> LINEミニアプリ開発における基本ルールは、[規約とポリシー](https://developers.line.biz/ja/terms-and-policies/)に記載される内容に基づきます。
+
+##### 1-1-6-1 [LINEプラットフォームへの大量リクエストの禁止](https://developers.line.biz/ja/docs/line-mini-app/development-guidelines/#prohibiting-mass-requests-to-line-platform)
+
+> 負荷テストを目的に、LIFF URLスキーム （https://liff.line.me/{liffId}）を経由してLINEミニアプリへ大量のアクセスを行ったり、LIFF APIやサービスメッセージAPIに大量のリクエストを送信したりしないでください。LINEミニアプリの負荷テストを行う場合は、LINEプラットフォームへの大量のリクエストが発生しないテスト環境を用意してください。
+> レート制限を超えて送信を行った場合、429 Too Many Requestsが返却され、エラーとなります。
+
+##### 1-1-6-2 [ログ保存の推奨](https://developers.line.biz/ja/docs/line-mini-app/development-guidelines/#liff-development-rules3)
+
+> 問題が発生した際に、開発者自身が原因や影響範囲の調査を円滑に行えるよう、[サービスメッセージAPIのリクエスト](https://developers.line.biz/ja/reference/line-mini-app/)のログを一定期間保存することを推奨します。
+
+###### 1-1-6-2-1 [サービスメッセージAPIリクエスト時のログ](https://developers.line.biz/ja/docs/line-mini-app/development-guidelines/#service-message-API-request-logs)
+
+> [サービスメッセージAPI](https://developers.line.biz/ja/reference/line-mini-app/)のリクエストを行った際は、レスポンスに含まれる、[サービス通知トークン](https://developers.line.biz/ja/reference/line-mini-app/#issue-notification-token-response)`notificationToken`に加え、以下の情報をログとして保存することを推奨します。
+> - APIリクエストを行った時間
+> - リクエストメソッド
+> - APIエンドポイント
+> - LINEプラットフォームからレスポンスされたステータスコード
+
+| APIリクエストを行った時間 | リクエストメソッド | APIエンドポイント | ステータスコード|
+| ---- | ---- | ---- | ---- |
+| Mon, 16 Jul 2021 10:20:23 GMT | POST | https://api.line.me/message/v3/notifier/send?target=service | 200 |
+
+> 運用するLINEミニアプリの要件等によっては、上記に加えて、たとえば以下のような情報を保存しておくことで、問題が発生した際の調査をより円滑に行うことができます。
+> - サービスメッセージAPIに対するリクエストのボディ
+> - APIリクエスト後にLINEプラットフォームから返却されたサービス通知トークン`notificationToken`以外のレスポンスのボディ
+
+> サービスメッセージAPIのリクエストのログ等は、お問い合わせいただいても提供は行っておりません。ログの保存は、LINEミニアプリを開発する開発者自身で行ってください。
+
+##### 1-1-6-3 [LIFFアプリ開発ガイドライン](https://developers.line.biz/ja/docs/liff/development-guidelines/)
+
+##### 1-1-6-3-1 [ユーザー情報は必ず安全に取り扱う](https://developers.line.biz/ja/docs/liff/development-guidelines/#liff-development-rules1)
+> LIFFアプリおよびサーバーでユーザー情報を使用する場合、LIFFアプリでユーザー情報を正しく処理しないと、なりすましやその他の種類の攻撃に対して脆弱になります。LIFFアプリおよびサーバーで、LIFFアプリで取得したユーザー情報を、安全に使用する方法について詳しくは、「[LIFFアプリおよびサーバーでユーザー情報を使用する](https://developers.line.biz/ja/docs/liff/using-user-profile/)」を参照してください。
+> LIFFのエンドポイントURLやLIFF URLのURLフラグメントには、アクセストークンやユーザーIDなどの機密情報が含まれます。外部にURLが漏洩しないように注意してください。
+
+###### 1-1-6-3-1-1 [LIFFアプリおよびサーバーでユーザー情報を使用する](https://developers.line.biz/ja/docs/liff/using-user-profile/)」
+
+> ユーザーが、LIFFブラウザでLIFFアプリを起動したり、外部ブラウザでLIFFアプリを起動してliff.initメソッドでログイン処理を行ったりすると、LIFFアプリはユーザーのプロフィール（ユーザーID、表示名、プロフィール画像、メールアドレス）を取得できます。
+> LIFFアプリで、これらのユーザー情報を正しく処理しないと、なりすましやその他の種類の攻撃に対して脆弱になります。
+> このページでは、LIFFアプリを開いたユーザーのユーザー情報を、LIFFアプリおよびサーバーで安全に使用する方法を説明します。
+
+- ユーザー情報をサーバーで使用する場合は、IDトークンまたはアクセストークンを、LIFFアプリからサーバーに送信してください。サーバーは、LIFFアプリが送信したトークンを、さらにLINEプラットフォームに送信することで、ユーザーのプロフィールを安全に取得できます。
+    - IDトークンを送信してユーザー情報を取得する
+        - [liff.getIDToken()](https://developers.line.biz/ja/reference/liff/#get-id-token)で取得したIDトークンをサーバーに送信した場合は、サーバーでIDトークンを検証する（[POST /oauth2/v2.1/verify](https://developers.line.biz/ja/reference/line-login/#verify-id-token)）ことで、ユーザーのプロフィール情報を安全に取得できます。
+    - アクセストークンを送信してユーザー情報を取得する
+        - [liff.getAccessToken()](https://developers.line.biz/ja/reference/liff/#get-access-token)で取得したアクセストークンをサーバーに送信した場合は、サーバーでアクセストークンの有効性を検証し（[GET /oauth2/v2.1/verify](https://developers.line.biz/ja/reference/line-login/#verify-access-token)）、さらにチャネルIDとアクセストークンの有効期限を検証することで、ユーザーのプロフィール情報を安全に取得できます（[GET /v2/profile](https://developers.line.biz/ja/reference/line-login/#get-user-profile)）。
+        - ユーザーがLIFFアプリを閉じると、有効期限が切れていなくてもアクセストークンは無効化されます。
+    - ユーザー情報をLIFFアプリで使用する
+        - [liff.getDecodedIDToken()](https://developers.line.biz/ja/reference/liff/#get-decoded-id-token)または[liff.getProfile()](https://developers.line.biz/ja/reference/liff/#get-profile)で取得したユーザーのプロフィール情報を使用してください。
+- liff.getDecodedIDToken()およびliff.getProfile()で取得したユーザーのプロフィールの詳細を、LIFFアプリからサーバーに送信しないでください。
+- LIFF SDKは、LINEプラットフォームから取得したIDトークンおよびアクセストークンを検証しています。そのため、liff.getIDToken()およびliff.getAccessToken()で取得したトークンは信用できます。
+
+###### 1-1-6-3-1-2 [LIFFアプリを初期化する際の注意点](https://developers.line.biz/ja/docs/liff/development-guidelines/#liff-development-rules2)
+
+> liff.init()メソッドが返すPromiseオブジェクトがresolveする前に、サーバーやフロントエンド側の処理などでURLを変更しないようにしてください。URLを変更すると、INIT_FAILEDが返され、LIFFアプリを開けません。 そのほか、LIFFアプリ初期化時の注意事項について詳しくは、「[LIFFアプリを初期化する](https://developers.line.biz/ja/docs/liff/developing-liff-apps/#initializing-liff-app)」を参照してください。
+
+###### 1-1-6-3-1-3 [LIFFアプリを開発する際に必ず守るべきこと](https://developers.line.biz/ja/docs/liff/development-guidelines/#liff-development-rules3)
+
+- LIFFアプリをSPA（Single Page Application）で構築する場合、LIFFはフラグメントを用いたルーティングとは相性が悪いため、[History API](https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-history-interface)を利用して実装してください。
+- 以下のようなデバイスまたはOSの機能を利用するAPIは、必ずユーザー操作をきっかけにして実行されるように実装してください。
+    - 位置情報の取得
+    - カメラへのアクセス
+    - マイクへのアクセス
+- ユーザーの同意なく、cookie、localStorage、またはsessionStorageを使ってユーザーをトラックしたり、LINEのユーザー情報と外部セッション情報を結びつけたりしないでください。
+- テスト段階のLIFFアプリに対するアクセス権限は、LIFFアプリ側で制限してください。
+- LIFFアプリとLIFFアプリ内で開くコンテンツのURLスキームは、httpsである必要があります。コンテンツのURLスキームがhttpの場合は、[LINE内ブラウザ](https://developers.line.biz/ja/glossary/#line-iab)で表示されます。この場合、LIFFアプリとしてチャネルに追加されていても、LIFFアプリとして動作しません。
+- LIFFアプリではcookie、localStorage、またはsessionStorageを利用できます。ただし、OSの仕様変更によって将来的に利用が制限される可能性があります。
+
+###### 1-1-6-3-1-4 [LINEプラットフォームへの大量リクエストの禁止](https://developers.line.biz/ja/docs/liff/development-guidelines/#prohibiting-mass-requests-to-line-platform)
+
+> 負荷テストを目的に、[LIFF URLスキーム](https://developers.line.biz/ja/docs/line-login/using-line-url-scheme/#opening-a-liff-app) （https://liff.line.me/{liffId}）を経由してLIFFアプリへ大量のアクセスを行ったり、[LIFF API](https://developers.line.biz/ja/reference/liff/)に大量のリクエストを送信したりしないでください。LIFFアプリの負荷テストを行う場合は、LINEプラットフォームへの大量のリクエストが発生しないテスト環境を用意してください。
+
+> レート制限を超えて送信を行った場合、429 Too Many Requestsが返却され、エラーとなります。
+
+### 1-2 デザイン
+
+#### 1-2-1 [LINEミニアプリのアイコン](https://developers.line.biz/ja/docs/line-mini-app/design/line-mini-app-icon/)
+
+##### 1-2-1-1 アイコンのサイズ
+
+> アイコンの背景領域（BG SIZE）のサイズは、130x130pxにしてください。
+
+##### 1-2-1-2 ロゴのサイズ
+
+> ロゴのサイズ（LOGO SIZE）は、最小で54x54px、最大で90x90pxにしてください。なお、54x54pxから76x76pxにすることを推奨します。
+
+##### 1-2-1-3 ロゴのデザイン
+
+> ロゴの視認性と品質を常に保つために、ロゴは単独のシンボルまたはワードマークとしてデザインしてください。
+
+##### 1-2-1-4 アイコンのフォーマット
+
+> アイコンとして利用可能なファイルフォーマットは、PNGとJPEGのみです。
+
+##### 1-2-1-4 アイコン用の画像をアップロードする方法
+
+> LINE Developersコンソールの［チャネル基本設定］タブにある［チャネルアイコン］より、アイコン用の画像をアップロードします。
+
+##### 1-2-1-5 [アイコンのテンプレート](https://developers.line.biz/ja/docs/line-mini-app/design/line-mini-app-icon/#icon-color)
+
+> アイコンの作成に利用できるPSD形式のテンプレートファイルを提供しています。テンプレートファイルを用いることで、アイコンのアウトラインを設定できます。アウトラインを設定することで、LINEアプリ上でアイコンと同系色の背景の前面にアイコンが掲載された場合でも、アイコンを認識しやすくなります。
+
+[アイコンのテンプレート](https://vos.line-scdn.net/line-developers/docs/media/line-mini/icon_template_file.psd)
+
+> テンプレートファイルをもとにアイコンを作成する際は、背景領域の色（Background color）に応じて、輪郭色（Outline Color）を指定してください。このとき、テンプレートファイルにおいて、背景色のタイプを選択することを推奨します。また、テンプレートファイルの未使用のレイヤーは非表示にした上で保存してください。
+
+#### 1-2-2 [LINEミニアプリのセーフエリア](https://developers.line.biz/ja/docs/line-mini-app/design/landscape/)
+
+> ノッチがある端末でもLINEミニアプリのすべてを表示するために、CSSを使ってLINEミニアプリをセーフエリアに収めることを推奨します。 LINEミニアプリでは、ノーマルモードとランドスケープモードの両方をサポートします。ノーマルモードとランドスケープモードでは、必要なセーフエリアが異なります。
+
+##### 1-2-2-1 ノーマルモード
+
+- 下：34px
+
+```css
+{
+    padding-bottom: 34px;
+}
+```
+
+##### 1-2-2-2 ランドスケープモード
+
+- 左右：44px
+- 下：34px
+
+```css
+{
+    padding-right: 44px;
+    padding-bottom: 21px;
+    padding-left: 44px;
+}
+```
+
+#### 1-2-3 [読み込み中アイコン](https://developers.line.biz/ja/docs/line-mini-app/design/loading-icon/)
+
+> 読み込み中アイコンは、LINEミニアプリで推奨されているUI要素です。
+> 以下のスピナー（svgファイル）をダウンロードして、読み込み中アイコンとして使用してください。 
+> - ライトモード用スピナー（[Download](https://developers.line.biz/media/line-mini-app/LINE_spinner_light.svg)）
+> - ダークモード用スピナー（[Download](https://developers.line.biz/media/line-mini-app/LINE_spinner_dark.svg)）
+> スピナーのサイズは、30x30ピクセルです。 スピナーは、画面中央に表示してください。
+
+### 1-3 運用
+
+#### 1-3-1 公開
+
+##### 1-3-1-1 [LINEミニアプリポリシー](https://terms2.line.me/LINE_MINI_App?lang=ja)
+
+##### 1-3-1-2 [審査を依頼する](https://developers.line.biz/ja/docs/line-mini-app/submit/submission-guide/)
+
+##### 1-3-1-2-1 [審査依頼前の確認事項](https://developers.line.biz/ja/docs/line-mini-app/submit/submission-guide/)
+
+- LINEミニアプリが、すべてのガイドラインやルールに従っていること。
+特に、以下のガイドラインおよびルールを確認してください。
+    - [LINEミニアプリのアイコンを作成する](https://developers.line.biz/ja/docs/line-mini-app/design/line-mini-app-icon/)
+    - [ランドスケープモードのセーフエリア](https://developers.line.biz/ja/docs/line-mini-app/design/landscape/)
+    - [読み込み中アイコン](https://developers.line.biz/ja/docs/line-mini-app/design/loading-icon/)
+    - [カスタムアクションボタンを実装する](https://developers.line.biz/ja/docs/line-mini-app/develop/share-messages/)
+    - [パフォーマンスガイドライン](https://developers.line.biz/ja/docs/line-mini-app/develop/performance-guidelines/)
+- LINEミニアプリが、「[LINEミニアプリポリシー (opens new window)](https://terms2.line.me/LINE_MINI_App?lang=ja)」を遵守していること
+- [LINE Developersコンソール](https://developers.line.biz/console/)でLINEミニアプリチャネルに登録した情報が、正しく、最新であること。
+    - プロバイダー名は、「サービス提供者」と同一であること。
+    - 「[チャネル説明](https://developers.line.biz/ja/docs/line-mini-app/discover/console-guide/#channel-description)」に、正しいサービス内容が記載されていること。
+    - プライバシーポリシーでは、ユーザー情報を取得する会社をプロバイダー名と同じ会社に設定する必要 があります。
+- 本番用のチャネルのLIFF URLと、審査用のチャネルのLIFF URLが同じサービスを反映しているかどうかを確認してください。
+    - 審査時、LINEヤフー株式会社は審査用のチャネルのLIFF URLを確認します。チャネルやLIFF内の各種設定は自動的に審査用のチャネルへコピーされ、提供されます。ただし、審査用チャネルのLIFF URLが本番用のチャネルのLIFF URLと同じサービス内容を提供しているか、念のために事前確認してください。
+
+##### 1-3-1-2-2 [審査のプロセス](https://developers.line.biz/ja/docs/line-mini-app/submit/submission-guide/)
+
+1. LINE Developersコンソールの［ワークフロー］タブで必要な情報を入力して、審査を依頼します。
+    - 審査対象のLINEミニアプリにベーシック認証によるアクセス制限をかけている場合は、審査を依頼する際に［ワークフロー］タブの［審査のための補足資料］でユーザー名とパスワードをお知らせください。詳しくは、「[公開前のLINEミニアプリにベーシック認証でアクセス制限をかける](https://developers.line.biz/ja/docs/line-mini-app/develop/develop-overview/#use-basic-authentication)」を参照してください。
+    - 審査は、LINE Developersコンソールの［チャネル基本設定］タブにある［チャネル説明］に記載された内容をもとに行われます。このため、以下の例を参考に、正しいサービス内容を記載してください。
+        - ［チャネル説明］について詳しくは、「[チャネル説明](https://developers.line.biz/ja/docs/line-mini-app/discover/console-guide/#channel-description)」を参照してください。
+    - 審査が終了するまでに、1～2週間程度かかります。却下された場合、再申請と再審査にはさらに数日かかります。審査の完了日は事前に指定することはできません。
+    - 審査依頼後、審査が始まる前であれば、［ワークフロー］タブの［審査申請をキャンセルする］ボタンからキャンセルできます。
+    - 審査を開始したら、審査依頼をキャンセルしたり、入力した情報を変更したりできません。
+    - 審査が開始されてステータスが「審査中」になると、審査用チャネルのLIFF URLにアクセスできます。
+    - LINE Developersコンソールの［チャネル基本設定］タブの［サービスを提供する地域］に「日本」が設定されている場合、LINEミニアプリチャネルが審査を通過すると、そのプロバイダーは[認証プロバイダー](https://developers.line.biz/ja/docs/line-developers-console/overview/#certified-provider)になります。
+        - 認証プロバイダーになると、ユーザーが確認する同意画面に、認証プロバイダーバッジを表示できます。またプロバイダーページを設定、公開できます。
+        - 認証プロバイダーバッジは、プロバイダーを作成したサービス提供者が本物であることをLINEヤフー株式会社が確認した証です。
+            - 実在している組織であること
+            - その組織に所属している人（またはその代理人）からの申請であること
+            - プライバシーポリシーを定め、公開している組織であること
+        - 認証プロバイダーバッジは、所定の申請等を行った法人ユーザーのみが表示できます。認証プロバイダーバッジを表示したいお客様は、担当営業までご連絡いただくか、[弊社パートナー](https://www.lycbiz.com/jp/partner/sales/line/)にお問い合わせください。
+2. LINEミニアプリの検索を有効にします。
+    - LINEミニアプリが承認されると、チャネルのステータスが自動的に「承認済み」になった後、すぐに「公開中」になります。LINE Developersコンソールの［ワークフロー］タブにある［検索可能にする］ボタンを使うと、LINE内でLINEミニアプリを検索できる状態にして、サービスを提供開始できます。
+    - 「公開中」になると、LIFF URLが有効になるため、ユーザーがLINEミニアプリにアクセスすることが技術的には可能となります。ただし、LINE内での検索がまだ有効になっていないため、ユーザーがサービスを検索して見つけることはできません。
+    - 検索を可能にしたいタイミングで［検索可能にする］ボタンを押すことで、LINE内でLINEミニアプリの検索が可能になります。ただし、ステータスが「公開中」になってから30日以内（土日祝日を含む）に手動で検索可能にしなかった場合は、31日目の午前9:00（JST）に自動的に検索可能となります。
+    - LINEミニアプリの検索が有効になると、LINEミニアプリチャネルのステータスは「開発中」に戻り、設定の変更や審査の再申請が改めて可能になります。このとき、設定を変更しても、再度審査を通過して［変更内容を公開する］ボタンを押すまでは、公開中のLINEミニアプリに影響はありません。
+3. すでに公開中のLINEミニアプリの場合は、作業の流れが少し異なります。
+    - INEミニアプリが承認されると、チャネルのステータスが「承認済み」に変わります。LINE Developersコンソールの［ワークフロー］タブにある［変更内容を公開する］ボタンを使って、手動でチャネルのステータスを「公開中」に変更する必要があります。
+    - ステータスが「公開中」になると、審査をリクエストした際に行った変更が、公開中のチャネルおよびそのチャネルのLIFF（LINEミニアプリ名、チャネル設定、LIFF設定など）に反映されます。
+    - 公開したいタイミングで［変更内容を公開する］ボタンを押すことで、ステータスが即時に「公開中」になります。ただし、ステータスが「承認済み」になってから30日以内（土日祝日を含む）に手動で変更内容の公開を行わなかった場合は、31日目の午前9:00（JST）に自動的に公開されます。
+    - 新しい変更が公開されると、LINEミニアプリチャネルのステータスは「開発中」に戻り、設定の変更や審査の再申請が改めて可能になります。このとき、設定を変更しても、再度審査を通過して［変更内容を公開する］ボタンを押すまでは、公開中のLINEミニアプリに影響はありません。
+
+#### 1-3-2 ユーザーがLINEミニアプリにアクセスする方法
+
+> ユーザーは、LINEからだけでなく、LINE外部からもLINEミニアプリにアクセスできます。LINE内には、LINEミニアプリにアクセスするためのポイントがいくつも用意されています。
+
+##### 1-3-2-1 LINE外部からアクセスする
+
+> [LINEミニアプリのパーマネントリンク](https://developers.line.biz/ja/docs/line-mini-app/develop/permanent-links/)にアクセスすると、LINE外部からもLINEミニアプリにアクセスできます。
+
+LINEミニアプリページのURLに対応するパーマネントリンクの例
+
+```
+https://liff.line.me/123456-abcedfg/shop?search=shoes#item10
+```
+
+> ユーザーがLINEをインストールしている場合は、ユーザーがパーマネントリンクをクリックすると、LINEが自動的に起動してLINEミニアプリのページが表示されます。 ユーザがLINEをインストールしていない場合は、ウェブブラウザが開き、LINEのダウンロードを求めるページが開きます。ユーザーがLINEをインストールすると、LINEミニアプリを利用できます。
+
+> LINE公式アカウントからもLINEミニアプリにアクセスできます。たとえば、LINE公式アカウントの友だちに送信するリッチメッセージや、LINE公式アカウントとのトーク画面に表示されるリッチメニューに、LINEミニアプリを開くリンクを追加できます。詳しくは、[LINE公式アカウントを活用する](https://developers.line.biz/ja/docs/line-mini-app/service/line-mini-app-oa/#add-a-line-mini-app-shortcut-to-the-rich-menu)を参照してください。
+
+##### 1-3-2-2 LINEで探すからアクセスする
+
+> INEの検索機能からも、LINEミニアプリにアクセスできます。
+
+##### 1-3-2-3 LINEメッセージからアクセスする
+
+> 友だち同士で、LINEミニアプリを簡単にシェアできます。[ビルトインのアクションボタン](https://developers.line.biz/ja/docs/line-mini-app/discover/builtin-features/#action-button)を使用するだけでなく、[カスタムアクションボタン](https://developers.line.biz/ja/docs/line-mini-app/develop/share-messages/)を使用して、LINEミニアプリのページをLINEメッセージでシェアできます。
+
+#### 1-3-2 運営ガイド
+
+- [サービス事業主のためのノウハウ](https://developers.line.biz/ja/docs/line-mini-app/service/service-operation/)
+- [LINEミニアプリ更新後の再審査](https://developers.line.biz/ja/docs/line-mini-app/service/update-service/)
+- [LINE公式アカウントを活用する](https://developers.line.biz/ja/docs/line-mini-app/service/line-mini-app-oa/)
+
+## 2 デモアプリを動かす
+
+実際の開発は以下のドキュメントを参照しながら行います。
+- [LINEミニアプリ > 開発を始めよう](https://developers.line.biz/ja/docs/line-mini-app/develop/develop-overview/)
+- [LINE Front-end Framework (LIFF) > クイックスタート](https://developers.line.biz/ja/docs/liff/)
+
+
+### 2-1 [実用シナリオ（LINE API Use Case）](https://lineapiusecase.com/ja/usecase.html)
+
+> LINE APIを活用したさまざまな実用シナリオを紹介します。デモアプリやサンプルソースコードを提供しているので、活用方法を具体的にイメージできます。
+
+#### 2-1-1 [LINEで得た顧客の「ID」と「データ」を活かすOMO基盤としてのCDP](https://lineapiusecase.com/ja/usecase/dynamics365.html)
+
+#### 2-1-2 [デジタル時代の新しい購買体験（OMO）をLINEで](https://lineapiusecase.com/ja/usecase/smartretail.html)
+
+##### 2-1-2-1 導入イメージ
+
+![導入イメージ](https://lineapiusecase.com/img/smartretail_PC_image_data.webp)
+
+##### 2-1-2-2 デモ
+
+| OMO型スマートストア | スマホレジ | キャンペーン (友だちへの共有施策) |
+| --- | --- | --- |
+| ![デモ OMO型スマートストア](https://github.com/ktom1211/memo/assets/83486898/6f9fe812-f465-4ef6-9120-c9fdb2318264) | ![スマホレジ](https://lineapiusecase.com/img/QR_LINE_SmartRetail_ja.webp) | ![キャンペーン (友だちへの共有施策)](https://lineapiusecase.com/img/QR_LINE_SmartRetail_CP_ja.webp) |
+
+##### 2-1-2-3 構成図
+
+![システム図](https://lineapiusecase.com/img/smartretail_system_diagram_azure.webp)
+![シーケンス図](https://lineapiusecase.com/img/smartretail_sequence_diagram_azure.webp)
+
+##### 2-1-2-4 サンプルソースコード
+
+- [Azure Serverless版(スマホレジ)](https://github.com/line/line-api-use-case-smart-retail-azure)
+- [AWS Serverless版(スマホレジ)](https://github.com/line/line-api-use-case-smart-retail)
+
+### 2-2 リポジトリをクローン
+
+```cmd
+git clone https://github.com/line/line-api-use-case-smart-retail-azure.git
+```
+
+### 2-3 バックエンド環境の.NETのバージョンを上げる
+
+バックエンドの環境が.Net Core 3.1になっているので、最新の.Net 7に変更する。
+アップグレードには[.NET Upgrade Assistant](https://learn.microsoft.com/ja-jp/dotnet/core/porting/upgrade-assistant-overview)を使用した。
+
+1. [.NET Upgrade Assistant](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.upgradeassistant)をインストールする
+2. `line-api-use-case-smart-retail-azure\backend\LineApiUseCaseSmartRetail.sln`を開く
+3. [src] > [LineApiUseCaseSmartRetail] を右クリック > [upgrade] をクリック
+4. [Upgrade Assistant] ウィンドウが開くので、[In-place project upgrade] をクリック
+5. 目標のフレームワークを選択して変換を行う
+6. [test] > [LineApiUseCaseSmartRetail.test] も同様に実施
+
+`.gitignore`が存在していないのでここでついでに作成する。
+ 
+```powershell
+cd backend
+dotnet new gitignore
+```
+
+### 2-4 [ラインチャンネルの作成](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/liff-channel-create.md)
+
+> チャネルは開発者が作成したシステムと LINE プラットフォームの通信を行うための通信路です。 本アプリでは以下の LINE チャネルが必要となるので、手順に従って作成してください。
+> - MessagingAPI 用 LINE チャネル
+> - LIFF 用 LINE チャネル
+> - LINEPay 用 チャネル
+
+#### 2-4-1 プロバイダーの作成
+
+> プロバイダーは複数のチャネルを管理するチーム・会社・個人のようなひとまとまりの単位となります。プロバイダーとチャネルは一対多の関係です。
+
+1. LINE Developes にログインした状態で、以下のコンソールに遷移します。
+    - https://developers.line.biz/console/
+2. プロバイダー見出しの横にある[作成]ボタンからプロバイダーを作成します。
+
+#### 2-4-2 チャネルの作成
+
+[チャネルを作成する](https://developers.line.biz/ja/docs/liff/getting-started/#step-two-create-channel)
+
+> LINEログイン	LIFFアプリを作成する場合や、次のステップでLIFFスターターアプリを試してみる場合、Create LIFF AppでLIFFアプリの開発環境を構築する場合は、こちらのチャネルを作成してください。
+> LINEミニアプリ	LINEミニアプリでLIFFのアプリを作成する場合は、こちらのチャネルを作成してください。
+
+今回はLIFEアプリを試すので、[LINEログイン]を選択する。
+
+
+[一度作成したチャネルを、後から他のプロバイダーに移動することはできません。](https://developers.line.biz/ja/docs/line-developers-console/overview/#channel-and-provider-linkage)
+
+> 一度作成したチャネルを、後から他のプロバイダーに移動することはできません。
+> [LINE Official Account Manager](https://manager.line.biz/)で作成した[LINE公式アカウントでMessaging APIを利用する](https://developers.line.biz/ja/docs/messaging-api/getting-started/#using-oa-manager)際は、初期設定時にチャネルを所属させるプロバイダーを新規作成するか、既存のプロバイダーを選択する必要があります。この場合も、後からチャネルを他のプロバイダーに移動することはできません。
+> Messaging APIのチャネルとLINEログインのチャネルを連携するサービスを開発する場合は、これらのチャネルを同じプロバイダーの配下に作成してください。
+> 開発者が提供するサービスを利用するLINEユーザーには、プロバイダーごとに異なるユーザーIDが割り当てられます。異なるプロバイダーに属するチャネル間では、ユーザーIDを利用して同一ユーザーであることを確認できません。
+
+##### 2-4-2-1 MessagingAPI 用のチャネルを作成
+
+1. プロバイダーの画面にて、[Messaging API]からチャネルを作成します。
+2. 以下の通り、項目を設定します。
+    - チャネルの種類： 変更無し
+    - プロバイダー： 変更無し
+    - 会社・事業者の所在国・地域： 日本
+    - チャネルアイコン： 変更無し
+    - チャネル名： 任意のチャネル名
+        - チャネル名はエンドユーザーが友達追加する際に表示されるアカウント名となります。後から変更可能です。
+    - チャネル説明： 任意の説明
+    - 大業種： アプリ内容に即した業種
+    - 小業種： アプリ内容に即した業種
+    - メールアドレス: 変更無し
+    - プライバシーポリシー URL： 任意
+    - サービス利用規約 URL： 任意
+3. [LINE公式アカウント利用規約](https://terms2.line.me/official_account_terms_jp?lang=ja)と[LINE公式アカウントAPI利用規約](https://terms2.line.me/official_account_api_terms_jp?lang=ja)に目を通して同意にチェックを入れます。
+4. [作成]をクリックし、チャネルを作成します。
+
+チャネルを作成すると、チャネル名と同名のLINE公式アカウントが作成されます。[LINE Official Account Manager](https://manager.line.biz/)にも、このチャネルに対応するLINE公式アカウントが表示され、各種設定ができるようになります。
+
+[Messaging APIの概要](https://developers.line.biz/ja/docs/messaging-api/overview/#page-title)
+
+##### 2-4-2-2 LIFF 用のチャネルを作成
+
+1. プロバイダーの画面にて、[新規チャンネル作成]から[LINEログイン]を選択します。
+2. 以下の通り、項目を設定します。
+    - チャネルの種類： 変更無し
+    - プロバイダー： 変更無し
+    - サービスを提供する地域： 日本
+    - 会社・事業者の所在国・地域： 日本
+    - チャネルアイコン： 変更無し
+    - チャネル名： 任意のチャネル名
+        - チャネル名は LINE ログイン時に表示される名称となります。後から変更可能です。
+    - チャネル説明： 任意の説明
+    - アプリタイプ： ウェブアプリにチェックを入れる
+    - 2要素認証の必須化： 任意
+        - [2要素認証を必須化する](https://developers.line.biz/ja/docs/line-login/overview/#two-factor-authentication)
+    - メールアドレス: 変更無し
+    - プライバシーポリシー URL： 任意
+    - サービス利用規約 URL： 任意
+3. [LINE開発者契約](https://terms2.line.me/LINE_Developers_Agreement?lang=ja)に目を通して同意にチェックを入れます。
+4. [作成]をクリックし、チャネルを作成します。
+
+##### 2-4-2-3 [チャネルにLINE公式アカウントをリンクする](https://developers.line.biz/ja/docs/line-login/link-a-bot/#link-a-line-official-account)
+
+1. LINEログインチャンネルの画面にて、［チャネル基本設定］タブをクリックし、［リンクされたLINE公式アカウント］の［編集］をクリックします。
+2. ユーザーに友だち追加させるLINE公式アカウントを選択して、［更新］をクリックします。
+
+##### 2-4-2-4 [LIFFアプリをチャネルに追加する](https://developers.line.biz/ja/docs/liff/registering-liff-apps/#registering-liff-app)
+
+1. LINEログインチャンネルの画面にて、［チャネル基本設定］タブをクリックし、[LIFF]のタブに切り替え、[追加]をクリックします。
+2. 以下の通り、項目を設定します。
+    - LIFF アプリ名： 任意のアプリ名
+    - サイズ： Full
+        - LINE 内で表示するアプリの縦サイズの設定です。以下リンク参照。後から変更可能です。 https://developers.line.biz/ja/docs/liff/overview/#screen-size
+    - エンドポイント URL： https://example.com
+        - アプリの作成後、再度設定するので仮の値を入れておきます。
+    - Scope: openid, profile にチェック
+        - openid：liff.getIDToken()およびliff.getDecodedIDToken()を使用するためのスコープ。
+        - profile：liff.getProfile()およびliff.getFriendship()を使用するためのスコープ。
+    - [友だち追加オプション](https://developers.line.biz/ja/docs/line-login/link-a-bot/)： On(Aggressive)
+        - On (normal)：LIFFアプリの権限の同意画面に、LINE公式アカウントを友だち追加するオプションを追加します。
+        - On (aggressive)：LIFFアプリの権限の同意画面の後に、LINE公式アカウントを友だち追加するかどうか確認する画面を表示します。
+        - Off：LINE公式アカウントを友だち追加するオプションを表示しません。
+    - Scan QR： off
+        - このチャネルに追加したLIFFアプリでliff.scanCodeV2()を利用する場合は、オンにします。
+    - モジュールモード： off
+        - LIFFアプリをモジュールモードで使用する場合は、オンにします。［モジュールモード］をオンにすると、アクションボタンを非表示にできます。このオプションはLIFFアプリの画面サイズで［Full］を選択している場合のみ表示されます。
+3. [追加]をクリックし、LIFFアプリを追加します。
+
+##### 2-4-2-5 LINE Pay用のチャネルを作成
+
+> こちらの手順では[LINE Pay Developers](https://pay.line.me/tw/developers/main/main?locale=ja_JP)の[Sandboxを利用したデモ動作](https://pay.line.me/tw/developers/techsupport/sandbox/testflow?locale=ja_JP)用のチャネルを作成します。実際のLINEPayによる課金は行われません。本番環境として利用する場合は、開発者が別途実装をお願い致します。
+
+1. [LINE Pay Developers](ht)にアクセスし、[Sandbox生成](https://pay.line.me/tw/developers/techsupport/sandbox/creation?locale=ja_JP)を行います。
+2. 以下の通り、項目を設定します。
+    - 国家: JP
+    - サービスタイプ: Online
+    - 通貨: JPY
+    - Emailアドレス: 利用できるアドレスを入力
+3. [Submit]をクリックし、Sandboxを生成します。
+4. 入力したメールアドレス宛てにLINE Payからメールが来ていることを確認します。
+5. [加盟店 My Pageログイン](https://pay.line.me/portal/jp/auth/login)にアクセスし、メールに記載された申請情報（テストIDとパスワード）にて加盟店センターにログインします。
+6. [決済連動管理] > [連動キー管理] にて、[照会]をクリックします。
+7. メールアドレスに認証コードが送信されるので、入力して[確認]をクリックします。
+8. 生成された`Channel ID`と`Channel Secret Key`は後ほどの手順で利用するので控えておきます。
+    - この情報は販売者ごとに一意に生成されるため、どこにも公開してはいけません。
+
+### 2-5 [Azure DevOpsを使用してデプロイする](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/deployment.md)
+
+[Azure Pipeline + Github使ってタダでCI/CDしちゃおう](https://qiita.com/nekia/items/b26f867180e7e8ab7b43)
+
+#### 2-5-1 環境準備
+
+- Azure アカウントの作成
+    - [Azure の無料アカウントを今すぐ作成する | Microsoft Azure](https://azure.microsoft.com/ja-jp/free/)
+- Azure DevOps アカウントの作成
+    - [Azure DevOps にサインアップする](https://learn.microsoft.com/ja-jp/azure/devops/user-guide/sign-up-invite-teammates?view=azure-devops&tabs=microsoft-account)
+    - [Azure Pipelinesの無償利用枠の申請](https://aka.ms/azpipelines-parallelism-request)
+        - [Azure Pipelines を無料枠で使おうとして躓いた話](https://qiita.com/Hachiyou-Renge/items/2083f2ce9e8b38558805)
+- Azure CLI の Bash 環境
+    - [Azure Cloud Shell](https://docs.microsoft.com/ja-jp/azure/cloud-shell/quickstart)
+        - サブスクリプションの設定
+            - `az account set --subscription <サブスクリプションID>`
+    - [Azure CLI をローカルインストール](https://learn.microsoft.com/ja-jp/cli/azure/install-azure-cli)
+        - インストール
+            - `winget install -e --id Microsoft.AzureCLI`
+        - Azure CLIにサインイン
+            - `az login`
+        - サブスクリプションの設定
+            - `az account set --subscription <サブスクリプションID>`
+- [Azure DevOps CLI](https://learn.microsoft.com/ja-jp/azure/devops/cli/?view=azure-devops)
+    - インストール
+        - `az extension add --name azure-devops`
+    - 組織を設定
+        - `az devops configure --defaults organization=https://dev.azure.com/<組織名>/`
+
+#### 2-5-2 Azure リソース作成
+
+Bash on Windows で実行するとパスの形式が異なるため、エラーになる場合がある。その場合は、PowerShell で実行するかAzure Cloud Shellを使用する。
+
+1. Azure リソースを作成します。
+
+```bash
+# 任意のグループ名を指定してください。
+rg=demo-linesmartretail
+az group create -n $rg -l eastasia
+az deployment group create -g $rg --template-file main.bicep
+```
+
+```powershell
+$rg = "demo-linesmartretail"
+az group create -n $rg -l eastasia
+az deployment group create -g $rg --template-file main.bicep
+```
+
+- [リソースグループ名の制限について](https://learn.microsoft.com/ja-jp/archive/blogs/jpaztech/rgname)
+- [Azure リソースの名前付けおよびタグ付けの戦略を作成する](https://learn.microsoft.com/ja-jp/azure/cloud-adoption-framework/ready/azure-best-practices/naming-and-tagging)
+- [名前付けの概要](https://learn.microsoft.com/ja-jp/azure/cloud-adoption-framework/govern/resource-consistency/naming?source=recommendations)
+- [リソースの名前付けとタグ付けの意思決定ガイド](https://learn.microsoft.com/ja-jp/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming-and-tagging-decision-guide?source=recommendations)
+- [名前付け規則を定義する](https://learn.microsoft.com/ja-jp/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming?source=recommendations)
+- [Azureリソースグループとは](https://hyoublog.com/2021/02/05/azure%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%81%A8%E3%81%AF/)
+- [弊社で使っているAzureリソースのスルメ系命名規則を紹介します](https://zenn.dev/aeonpeople/articles/0b4a4be83d0dfd)
+
+2. デプロイトークンを取得します。
+
+```bash
+staticAppId=$(az resource list -g $rg --query "[?type=='Microsoft.Web/staticSites'].id" -o tsv)
+az rest --method post --url "$staticAppId/listsecrets?api-version=2020-06-01" --query 'properties.apiKey' -o tsv
+```
+
+```powershell
+$staticAppId = az resource list -g $rg --query "[?type=='Microsoft.Web/staticSites'].id" -o tsv
+az rest --method post --url "$($staticAppId)/listsecrets?api-version=2020-06-01" --query 'properties.apiKey' -o tsv
+```
+
+以降の手順で利用するため、この値は保存しておいてください。
+
+これらのコマンドは、指定されたリソースグループ内の静的サイトのIDを取得し、そのIDを使用してサイトのAPIキーを取得します。これは、Azure上で静的サイトを管理する際に、プログラム的にAPIキーを取得するために使用されます。
+
+1. `staticAppId=$(az resource list -g $rg --query "[?type=='Microsoft.Web/staticSites'].id" -o tsv)`
+    - `az resource list`: Azureリソースのリストを取得します。
+    - `-g $rg`: $rg変数に格納されているリソースグループを指定します。
+    - `--query "[?type=='Microsoft.Web/staticSites'].id"`: 取得したリソースの中から、タイプがMicrosoft.Web/staticSites（静的サイト）であるもののIDを抽出します。
+    - `-o tsv`: 出力をタブ区切りの値（TSV形式）で表示します。
+    - `staticAppId=$(...)`: コマンドの結果（静的サイトのID）をstaticAppId変数に格納します。
+2. `az rest --method post --url "$staticAppId/listsecrets?api-version=2020-06-01" --query 'properties.apiKey' -o tsv`
+    - `az rest`: Azure REST APIにリクエストを送信します。
+    - `--method post`: HTTP POSTメソッドを使用します。
+    - `--url "$staticAppId/listsecrets?api-version=2020-06-01"`: $staticAppId変数に格納された静的サイトのIDを使用して、そのサイトのシークレット（秘密情報）をリストするAPIエンドポイントにリクエストします。api-version=2020-06-01はAPIのバージョンを指定しています。
+    - `--query 'properties.apiKey'`: レスポンスからproperties.apiKey（APIキー）のみを抽出します。
+    - `-o tsv`: 出力をタブ区切りの値（TSV形式）で表示します。
+
+3. Azure Static Web Appsのホスト名を取得します。
+
+```bash
+az rest --method get --url "$staticAppId?api-version=2020-06-01" --query 'hostNameSslStates[0].hostName' -o tsv
+```
+
+```powershell
+az rest --method get --url "$($staticAppId)?api-version=2020-06-01" --query 'hostNameSslStates[0].hostName' -o tsv
+```
+
+以降の手順で利用するため、この値は保存しておいてください。
+
+このコマンドは、静的サイトのIDを使用してサイトのホスト名を取得します。これは、Azure上で静的サイトを管理する際に、プログラム的にホスト名を取得するために使用されます。
+
+1. `az rest`: Azure REST APIにリクエストを送信します。
+2. `--method get`: HTTP GETメソッドを使用します。
+3. `--url "$staticAppId?api-version=2020-06-01"`: $staticAppId変数に格納された静的サイトのIDを使用して、そのサイトの情報を取得するAPIエンドポイントにリクエストします。api-version=2020-06-01はAPIのバージョンを指定しています。
+4. `--query 'hostNameSslStates[0].hostName'`: レスポンスからhostNameSslStates[0].hostName（ホスト名）のみを抽出します。
+5. `-o tsv`: 出力をタブ区切りの値（TSV形式）で表示します。
+
+#### 2-5-3 アプリケーションデプロイ
+
+[Azure DevOps の ビルドパイプラインを CLI で試してみた](https://qiita.com/mnrst/items/1003dcf949c6dddfa8a6)
+[Azure Pipelinesのコマンドの基本的な使い方](https://zenn.dev/gekal/articles/azure-devops-pipeline-cli-sample)
+
+1. Azure DevOpsに新しいプロジェクトを作成します。
+    - [Azure DevOps にプロジェクトを作成する](https://docs.microsoft.com/ja-jp/azure/devops/organizations/projects/create-project?view=azure-devops&tabs=preview-page)
+    - `az devops project create --name <プロジェクト名>`
+    - `az devops configure --defaults organization=https://dev.azure.com/<組織名>/project=<プロジェクト名>/`
+2. Azure DevOpsに新しいリポジトリを作成します。
+    - [Azure Repos にリポジトリを作成する](https://docs.microsoft.com/ja-jp/azure/devops/repos/git/create-new-repo?view=azure-devops&tabs=browser)
+    - `az repos create --name <リポジトリ名> --project <プロジェクト名>`
+3. リポジトリにコードをプッシュします。
+    - `git remote add origin https://<組織名>@dev.azure.com/<組織名>/<プロジェクト名>/_git/<リポジトリ名>`
+    - `git push -u origin main`
+4. Azure Pipelinesに新しいパイプラインを作成します。
+    - [Azure Pipelines にパイプラインを作成する](https://docs.microsoft.com/ja-jp/azure/devops/pipelines/create-first-pipeline?view=azure-devops&tabs=java%2Cyaml%2Cbrowser%2Ctfs-2018-2)
+    - `az pipelines create --name <パイプライン名> --repository <リポジトリ名>  --branch main --repository-type tfsgit --yml-path ./azure-pipelines.yml --skip-first-run true`
+4. 変数の追加
+    - `az pipelines variable create --name deployment_token --value <デプロイトークン> --secret true --pipeline-name=<パイプライン名>`
+    - `az pipelines variable create --name LIFF_ID --value <LIFFアプリID> --pipeline-name=<パイプライン名>`
+    - `az pipelines variable create --name BASE_HOSTNAME --value <Azure Static Web Appsのホスト名> --pipeline-name=<パイプライン名>`
+5. パイプラインの実行
+    - `az pipelines run --name <パイプライン名>`
+
+#### 2-5-3-1 ローカルからのデプロイ
+
+Azure Piplinesが無料枠の申請が必要なため、ローカルで実行する場合は以下の手順を実施する。
+
+[Azure Static Web Apps CLI を使用して静的 Web アプリをデプロイする](https://learn.microsoft.com/ja-jp/azure/static-web-apps/static-web-apps-cli-deploy)
+[Azure Static Web Apps CLIを使ってローカル開発環境を構築する（2）](https://miyohide.hatenablog.com/entry/2022/12/25/140605)
+[NextjsでSSGをしてSWA CLIを使って、Azure Static Web Appsに簡単デプロイ（ローカル上でSSG確認する方法付き）](https://qiita.com/fsdg-takada/items/ff64bc0d46bc2e2a470b)
+[Azure Static Web Apps の CLI を使ってローカル開発を試してみた](https://zenn.dev/microsoft/articles/static-web-apps-cli-getting-start#azure-static-web-apps)
+
+#### 2-5-3-1-1 環境変数の設定
+
+```bash
+export LIFF_ID=<LIFFアプリID>
+export BASE_HOSTNAME=<Azure Static Web Appsのホスト名>
+
+echo "LIFF_ID=${LIFF_ID}" > frontend/.env
+echo "BASE_URL=https://${BASE_HOSTNAME}" >> frontend/.env
+```
+
+#### 2-5-3-1-2 Azure Static Web Appsのデプロイ
+
+1. [Azure Static Web Apps CLI](https://github.com/Azure/static-web-apps-cli)をインストールする。
+
+```bash
+npm install -D @azure/static-web-apps-cli
+```
