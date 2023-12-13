@@ -553,7 +553,7 @@ npm install --save--dev cross-env
 
 > こちらの手順では[LINE Pay Developers](https://pay.line.me/tw/developers/main/main?locale=ja_JP)の[Sandboxを利用したデモ動作](https://pay.line.me/tw/developers/techsupport/sandbox/testflow?locale=ja_JP)用のチャネルを作成します。実際のLINEPayによる課金は行われません。本番環境として利用する場合は、開発者が別途実装をお願い致します。
 
-1. [LINE Pay Developers](https://pay.line.me/tw/developers/main/main?locale=ja_JP)にアクセスし、[Sandbox生成](https://pay.line.me/tw/developers/techsupport/sandbox/creation?locale=ja_JP)を行います。
+1. [LINE Pay Developers](https://pay.line.me/tw/developers/main/main?locale=ja_JP)cdにアクセスし、[Sandbox生成](https://pay.line.me/tw/developers/techsupport/sandbox/creation?locale=ja_JP)を行います。
 2. 以下の通り、項目を設定します。
     - 国家: JP
     - サービスタイプ: Online
@@ -744,6 +744,8 @@ cd frontend
 
 npm install
 npm run build
+
+cd..
 ```
 
 3. デプロイを行います。
