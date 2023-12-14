@@ -1061,15 +1061,9 @@ var resourceId = args[2];
 var date = args[3];
 var masterKey = args[4];
 
-console.log("verb: " + verb);
-console.log("resourceType: " + resourceType);
-console.log("resourceId: " + resourceId);
-console.log("date: " + date);
-console.log("masterKey: " + masterKey);
-
 var token = getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey);
 
-console.log("token: " + token);
+console.log(token);
 EOS
 ```
 
@@ -1080,16 +1074,13 @@ endpoint="https://localhost:8081/"
 masterKey="C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
 dbName="LineApiUseCaseSmartRetail"
 
-# 認証トークンを生成
-authToken=$(node.exe create_cosmos_db_auth_token.js "post" "dbs" "" "$(date -u)" $masterKey)
-
 verb="post"
 resourceType="dbs"
 resourceLink=""
 date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
 
 # Node.jsスクリプトを実行してトークンを生成
-authHeader=$(node.exe create_cosmos_db_auth_token.js $verb $resourceType $resourceLink "$date" $masterKey)
+authHeader=$(node.exe create_cosmos_db_auth_token.js "$verb" "$resourceType" "$resourceLink" "$date" "$masterKey")
 
 echo $authHeader
 
