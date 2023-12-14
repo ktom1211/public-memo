@@ -948,3 +948,5 @@ $webClient.DownloadFile($cert_url, $cert_path)
 certutil -addstore -f "Root" $cert_path
 ```
 
+ローカル管理画面にアクセス
+[https://localhost:8081/_explorer/index.html](https://localhost:8081/_explorer/index.html)
