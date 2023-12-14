@@ -1268,6 +1268,8 @@ add_data_to_container "lineChannel" '{
 2. VSCodeのデバッグを開き、[Attach to .NET Functions]を選択します。
 3. デバッグを開始します。
 
+環境そのものは動いていそうだけど各Functionが動いていない？紐づいていない？
+
 Functionsの起動は実際には以下のコマンドが実行されている
 
 ```bash
