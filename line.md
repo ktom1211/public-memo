@@ -1032,31 +1032,26 @@ touch create_cosmos_db_auth_token.js
 
 # Node.jsスクリプトに値を設定
 cat << EOS > create_cosmos_db_auth_token.js
-var crypto = require("crypto");
-
-function getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey) {
-    console.log("Verb:", verb);
-    console.log("ResourceType:", resourceType);
-    console.log("ResourceId:", resourceId);
-    console.log("Date:", date);
-    console.log("MasterKey:", masterKey);
-
-    var key = Buffer.from(masterKey, "base64");
-
-    var text = (verb || "").toLowerCase() + "\n" +
-               (resourceType || "").toLowerCase() + "\n" +
-               (resourceId || "") + "\n" +
-               date.toLowerCase() + "\n" +
-               "" + "\n";
-
-    var body = Buffer.from(text, "utf8");
-    var signature = crypto.createHmac("sha256", key).update(body).digest("base64");
-
-    var MasterToken = "master";
-    var TokenVersion = "1.0";
-
-    return encodeURIComponent("type=" + MasterToken + "&ver=" + TokenVersion + "&sig=" + signature);
-}
+var crypto = require("crypto");  
+  
+function getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey) {  
+    var key = new Buffer(masterKey, "base64");  
+  
+    var text = (verb || "").toLowerCase() + "\n" +   
+               (resourceType || "").toLowerCase() + "\n" +   
+               (resourceId || "") + "\n" +   
+               date.toLowerCase() + "\n" +   
+               "" + "\n";  
+  
+    var body = new Buffer(text, "utf8");  
+    var signature = crypto.createHmac("sha256", key).update(body).digest("base64");  
+  
+    var MasterToken = "master";  
+  
+    var TokenVersion = "1.0";  
+  
+    return encodeURIComponent("type=" + MasterToken + "&ver=" + TokenVersion + "&sig=" + signature);  
+}  
 
 // コマンドライン引数を受け取る
 var args = process.argv.slice(2);
@@ -1085,6 +1080,8 @@ date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
 
 # Node.jsスクリプトを実行してトークンを生成
 authHeader=$(node.exe create_cosmos_db_auth_token.js $verb $resourceType $resourceLink "$date" $masterKey)
+
+echo $authHeader
 
 # データベースを作成するためのJSON本体
 requestBody="{\"id\":\"$dbName\"}"
