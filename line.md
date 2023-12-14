@@ -906,3 +906,45 @@ lineChannelに追加するデータのテンプレート
 ToDo
 
 
+
+### 2-5 ローカル実行手順
+
+#### 2-5-1 [バックエンド ローカル実行手順](https://github.com/line/line-api-use-case-smart-retail-azure/blob/main/docs/jp/backend-deployment.md#%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89-%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E5%AE%9F%E8%A1%8C%E6%89%8B%E9%A0%86)
+
+##### 2-5-1-1 環境
+
+###### 2-5-1-1-1 [Azure Functions for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
+###### 2-5-5-1-2 [Cosmos DB Emulator](https://docs.microsoft.com/ja-jp/azure/cosmos-db/local-emulator)
+
+- [Cosmos DB Emulator Recipes](https://github.com/Azure/cosmosdb-emulator-recipes/tree/main)
+- [Docker for Windows 環境で Linuxコンテナ版 Azure Cosmos DB emulator 起動](https://qiita.com/kazumihirose/items/24fc49843c763f799b46)
+
+1. イメージのPullと実行
+
+```bash
+docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+docker run -p 8081:8081 -p 10251:10251 -p 10252:10252 -p 10253:10253 -p 10254:10254 -m 3g --cpus=2.0 --name=test-linux-emulator -e AZURE_COSMOS_EMULATOR_PARTITION_COUNT=10 -e AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true -it mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+```
+
+2. エミュレーター用の証明書の取得
+
+[https://localhost:8081/_explorer/emulator.pem](https://localhost:8081/_explorer/emulator.pem)をダウンロードし、インストールします。
+PowerShellを管理者権限で起動し、以下のコマンドを実行します。
+
+```powershell
+$cert_url = "https://localhost:8081/_explorer/emulator.pem"
+$cert_path = "$env:USERPROFILE\Downloads\emulator.pem"
+
+# SSL/TLSの検証を無視する設定
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
+
+# 証明書のダウンロード
+# Invoke-WebRequest が予期せぬエラーで使えなかったので代わりに System.Net.WebClient クラスを使用
+$webClient = New-Object System.Net.WebClient
+$webClient.DownloadFile($cert_url, $cert_path)
+
+# 証明書のインストール
+# Import-Certificate -FilePath $cert_path -CertStoreLocation Cert:\LocalMachine\Root
+certutil -addstore -f "Root" $cert_path
+```
+
