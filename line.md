@@ -1262,3 +1262,58 @@ add_data_to_container "lineChannel" '{
 1. VSCodeの拡張機能[Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)をインストールします。
 2. VSCodeのデバッグを開き、[Attach to .NET Functions]を選択します。
 3. デバッグを開始します。
+
+### 2-6 フロントエンドのローカル実行
+
+#### 2-6-1 ngrokのインストール
+
+ローカルのLIFFアプリを表示するために[ngrok](https://ngrok.com/docs)を使用します。
+
+1. インストール
+
+```powershell
+# 管理者権限でPowerShellを起動
+choco install ngrok
+# Invoke-WebRequest -Uri https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip -OutFile ngrok-v3-stable-windows-amd64.zip
+# Expand-Archive -Path ngrok-v3-stable-windows-amd64.zip -DestinationPath .
+```
+
+2. アカウントの接続
+
+次に、ngrokエージェントをngrokアカウントに接続します。
+まだの場合は、[ngrok アカウントにサインアップします。](https://dashboard.ngrok.com/)
+ngrok ダッシュボードから[ngrok authtoken](https://dashboard.ngrok.com/get-started/your-authtoken)をコピーします。
+
+ターミナルで以下のコマンドを実行して authtoken をインストールし、ngrok エージェントをアカウントに接続します。
+
+```powershell
+ngrok config add-authtoken NGROK_AUTHTOKEN
+```
+
+#### 2-6-2 ローカル実行
+
+ngrokを使ってローカル実行します。
+
+1. .envの環境変数を適切な値に変更します。
+
+```:frontend/.env
+BASE_URL=http://localhost:5000
+LIFF_ID=<LIFFアプリID>
+```
+
+2. ローカルサーバーを起動します。
+
+```bash
+cd frontend
+npx http-server -p 5000
+```
+
+3. ngrok を使って公開サーバーのURLを発行します。
+
+```bas
+ngrok http 5000
+```
+
+4. LIFFアプリのエンドポイントURLをngrokが発行したURLに設定します。
+
+5. functionsを起動後、LIFF URLに遷移します。
