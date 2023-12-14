@@ -950,3 +950,88 @@ Import-Certificate -FilePath $cert_path -CertStoreLocation Cert:\LocalMachine\Ro
 
 ローカル管理画面にアクセス
 [https://localhost:8081/_explorer/index.html](https://localhost:8081/_explorer/index.html)
+
+##### 2-5-1-2 ファイル、データの準備
+
+1. `local.settings.json`の準備
+
+- LINE Payの決済をテストする場合に必要な項目
+    - LINEチャネルID
+    - LINEログインのチャネルID
+    - LINE PayのチャネルID、シークレット
+    - (フロントエンドから接続して動作確認する場合)各種URL
+    - http://localhost/~ のものが該当
+    - CosmosDbAccount Cosmos DBのアカウントURL(ローカルでCosmosDBエミュレータを使う場合はテンプレートファイルのままでOK)
+    - CosmosDbKey Cosmos DBのキー(ローカルでCosmosDBエミュレータを使う場合はテンプレートファイルのままでOK)
+
+```json:local.settings.json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "ApplicationOptions__DetailsUrl": "http://localhost/history.html",
+    "LineOptions__ChannelId": "<LINE_CHANNEL_ID>",
+    "LineOptions__LoginChannelId": "<LINE_LOGIN_CHANNEL_ID>",
+    "LinePayOptions__ChannelId": "<LINEPAY_CHANNEL_ID>",
+    "LinePayOptions__ChannelSecret": "<LINEPAY_CHANNEL_SECRET>",
+    "LinePayOptions__PaymentImageUrl": "http://localhost/dummy",
+    "LinePayOptions__ConfirmUrl": "http://localhost/completed.html",
+    "LinePayOptions__CancelUrl": "http://localhost/smaphregi/",
+    "CosmosDbAccount": "https://localhost:8081/",
+    "CosmosDbKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+  }
+}
+```
+
+コマンドで生成する場合は以下の通り。
+
+```bash
+# local.settings.json ファイル生成
+touch backend/LineApiUseCaseSmartRetail/local.settings.json
+
+# local.settings.json ファイルに値を設定
+# LINEチャネルID
+# LINEログインのチャネルID
+# LINE PayのチャネルID、シークレット
+# (フロントエンドから接続して動作確認する場合)各種URL
+# http://localhost/~ のものが該当
+# CosmosDbAccount Cosmos DBのアカウントURL(ローカルでCosmosDBエミュレータを使う場合はテンプレートファイルのままでOK)
+# CosmosDbKey Cosmos DBのキー(ローカルでCosmosDBエミュレータを使う場合はテンプレートファイルのままでOK)
+cat << EOS > backend/LineApiUseCaseSmartRetail/local.settings.json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "ApplicationOptions__DetailsUrl": "http://localhost/history.html",
+    "LineOptions__ChannelId": "<LINE_CHANNEL_ID>",
+    "LineOptions__LoginChannelId": "<LINE_LOGIN_CHANNEL_ID>",
+    "LinePayOptions__ChannelId": "<LINEPAY_CHANNEL_ID>",
+    "LinePayOptions__ChannelSecret": "<LINEPAY_CHANNEL_SECRET>",
+    "LinePayOptions__PaymentImageUrl": "http://localhost/dummy",
+    "LinePayOptions__ConfirmUrl": "http://localhost/completed.html",
+    "LinePayOptions__CancelUrl": "http://localhost/smaphregi/",
+    "CosmosDbAccount": "https://localhost:8081/",
+    "CosmosDbKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+  }
+}
+```
+cat << EOS > backend/LineApiUseCaseSmartRetail/local.settings.json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "ApplicationOptions__DetailsUrl": "http://localhost/history.html",
+    "LineOptions__ChannelId": "2002193664",
+    "LineOptions__LoginChannelId": "2002193700",
+    "LinePayOptions__ChannelId": "2002143330",
+    "LinePayOptions__ChannelSecret": "bce1d67e2c9166fa7543f4c5e6e49f79",
+    "LinePayOptions__PaymentImageUrl": "http://localhost/dummy",
+    "LinePayOptions__ConfirmUrl": "http://localhost/completed.html",
+    "LinePayOptions__CancelUrl": "http://localhost/smaphregi/",
+    "CosmosDbAccount": "https://localhost:8081/",
+    "CosmosDbKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+  }
+}
