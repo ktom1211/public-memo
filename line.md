@@ -1177,7 +1177,7 @@ add_data_to_container() {
          -H "x-ms-date: $date" \
          -H "Authorization: $authHeader" \
          -H "x-ms-documentdb-partitionkey: [\"$partitionKeyValue\"]" \
-         -H "x-ms-documentdb-is-upsert: true" \
+         -H "x-ms-documentdb-is-upsert: True" \
          --data "$data" \
          $endpoint"dbs/$dbName/colls/$containerName/docs"
 }
@@ -1185,6 +1185,7 @@ add_data_to_container() {
 
 # couponsコンテナにデータを追加
 add_data_to_container "coupons" '{
+  "id": "123",
   "barcode": "4956022006116",
   "couponDescription": "【感謝価格】すいか20%割引",
   "couponId": "watermelon_coupon",
