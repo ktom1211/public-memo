@@ -1170,6 +1170,7 @@ add_data_to_container() {
 
     # UUIDを生成
     local docId=$(powershell -Command "[guid]::NewGuid().ToString()")
+    
 
     # データにUUIDを追加
     local modifiedData=$(echo $data | jq --arg docId "$docId" '. + {id: $docId}')
