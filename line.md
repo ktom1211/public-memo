@@ -1254,3 +1254,11 @@ add_data_to_container "lineChannel" '{
     "updatedTime": "2021-01-01T00:00:00.0000000+00:00"
 }' "$channelId"
 ```
+
+##### 2-5-1-3 ローカル実行
+
+[Run the serverless app locally](https://github.com/microsoft/vscode-azurefunctions?tab=readme-ov-file#run-the-serverless-app-locally)
+
+1. VSCodeの拡張機能[Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)をインストールします。
+2. VSCodeのデバッグを開き、[Attach to .NET Functions]を選択します。
+3. デバッグを開始します。
