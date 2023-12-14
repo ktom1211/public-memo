@@ -1096,7 +1096,7 @@ requestBody="{\"id\":\"$dbName\"}"
 
 # データベースを作成
 curl -k -X POST -H "Content-Type: application/json" \
-     -H "x-ms-version: 2017-02-22" \
+     -H "x-ms-version: 2018-12-31" \
      -H "x-ms-date: $date" \
      -H "Authorization: $authHeader" \
      --data "$requestBody" \
@@ -1114,14 +1114,32 @@ create_container() {
     local partitionKey=$2
 
     # コンテナを作成するためのJSON本体（インデックスポリシーを省略）
-    local requestBody="{\"id\":\"$containerName\",\"partitionKey\":{\"paths\":[\"$partitionKey\"],\"kind\":\"Hash\"}}"
+    local requestBody=`{
+        "id": "'$containerName'",
+        "indexingPolicy": {
+            "indexingMode": "consistent",
+            "automatic": true,
+            "includedPaths": [
+                {
+                    "path": "/*"
+                }
+            ],
+            "excludedPaths": [
+                {
+                    "path": "/\"_etag\"/?"
+                }
+            ]
+        }
+    }`
+    
+    "{\"id\":\"$containerName\",\"partitionKey\":{\"paths\":[\"$partitionKey\"],\"kind\":\"Hash\"}}"
 
     # トークンを生成
     local authHeader=$(node.exe create_cosmos_db_auth_token.js "post" "colls" "dbs/$dbName" "$date" "$masterKey")
 
     # コンテナを作成
     curl -k -X POST -H "Content-Type: application/json" \
-         -H "x-ms-version: 2017-02-22" \
+         -H "x-ms-version: 2018-12-31" \
          -H "x-ms-date: $date" \
          -H "Authorization: $authHeader" \
          --data "$requestBody" \
@@ -1155,7 +1173,7 @@ update_index_policy() {
 
     # PUTリクエストの送信
     curl -X PUT -H "Content-Type: application/json" \
-         -H "x-ms-version: 2017-02-22" \
+         -H "x-ms-version: 2018-12-31" \
          -H "x-ms-date: $date" \
          -H "Authorization: $authToken" \
          --data "$requestBody" \
@@ -1189,7 +1207,7 @@ add_data_to_container() {
 
     # データを追加
     curl -k -X POST -H "Content-Type: application/json" \
-         -H "x-ms-version: 2017-02-22" \
+         -H "x-ms-version: 2018-12-31" \
          -H "x-ms-date: $date" \
          -H "Authorization: $authHeader" \
          -H "x-ms-documentdb-partitionkey: [\"$partitionKeyValue\"]" \
