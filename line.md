@@ -1211,43 +1211,46 @@ add_data_to_container "items" '{
   "imageUrl": "https://media.istockphoto.com/vectors/watermelon-icon-in-trendy-flat-style-isolated-on-white-background-vector-id877064160?s=612x612",
   "itemName": "すいか",
   "itemPrice": 100
-}'
+}' "4956022006116"
 
 add_data_to_container "items" '{
   "barcode": "1230059783947",
   "imageUrl": "https://media.gettyimages.com/vectors/stack-of-books-vector-id504374218?s=2048x2048",
   "itemName": "書籍",
   "itemPrice": 100
-}'
+}' "1230059783947"
 
 add_data_to_container "items" '{
   "barcode": "2130627341496",
   "imageUrl": "https://media.gettyimages.com/vectors/tomato-flat-design-vegetable-icon-vector-id1017915086?s=2048x2048",
   "itemName": "とまと",
   "itemPrice": 50
-}'
+}' "2130627341496"
 
 add_data_to_container "items" '{
   "barcode": "8358328475935",
   "imageUrl": "https://media.gettyimages.com/vectors/stack-of-books-vector-id504374218?s=2048x2048",
   "itemName": "書籍",
   "itemPrice": 100
-}'
+}' "8358328475935"
 
 add_data_to_container "items" '{
   "barcode": "84895769",
   "imageUrl": "https://media.istockphoto.com/vectors/simple-apple-in-flat-style-vector-illustration-vector-id1141529240?s=612x612",
   "itemName": "りんご",
   "itemPrice": 50
-}'
+}' "84895769"
 
 
 # lineChannelコンテナにデータを追加
+channelId=<Messaging APIチャネルのチャネルID>
+channelSecret=<Messaging APIチャネルのチャネルシークレット>
+channelAccessToken=<Messaging APIチャネルのチャネルトークン>
 add_data_to_container "lineChannel" '{
-    "channelId": "Messaging APIチャネルのチャネルID",
-    "channelSecret": "Messaging APIチャネルのチャネルシークレット",
-    "channelAccessToken": "Messaging APIチャネルのチャネルトークン",
+    "channelId": "$channelId",
+    "channelSecret": "$channelSecret",
+    "channelAccessToken": "$channelAccessToken",
     "limitDate": "2021-01-01T00:00:00.0000000+00:00",
     "updatedTime": "2021-01-01T00:00:00.0000000+00:00"
-}'
+}' "$channelId"
 ```
