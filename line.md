@@ -1022,10 +1022,130 @@ EOS
 2. Cosmos DBへのマスタデータ登録
 
 [2-5-3-2-2 Cosmos DBへのマスタデータ登録](#2-5-3-2-2-cosmos-dbへのマスタデータ登録)の[2. データベースとコンテナの作成]と[3. データの追加]をローカルで実施します。
+[エミュレーターに対してはAzure CLIは使用できない](https://github.com/Azure/azure-cli/issues/17957#issuecomment-836084708)そうなので、[REST API](https://learn.microsoft.com/en-us/rest/api/cosmos-db/)を直接叩く必要があります。
+
+REAT API用の認証トークンを生成するNode.jsスクリプトを作成
 
 ```bash
-# データベースの作成
-db_key=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
-db_url=https://localhost:8081
-db_name=LineApiUseCaseSmartRetail
-az cosmosdb sql database create --key $db_key --db-name $db_name --url-connection "https://localhost:8081"
+# Node.jsスクリプトを作成
+touch create_cosmos_db_auth_token.js
+
+# Node.jsスクリプトに値を設定
+cat << EOS > create_cosmos_db_auth_token.js
+var crypto = require("crypto");
+
+function getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey) {
+    console.log("Verb:", verb);
+    console.log("ResourceType:", resourceType);
+    console.log("ResourceId:", resourceId);
+    console.log("Date:", date);
+    console.log("MasterKey:", masterKey);
+
+    var key = Buffer.from(masterKey, "base64");
+
+    var text = (verb || "").toLowerCase() + "\n" +
+               (resourceType || "").toLowerCase() + "\n" +
+               (resourceId || "") + "\n" +
+               date.toLowerCase() + "\n" +
+               "" + "\n";
+
+    var body = Buffer.from(text, "utf8");
+    var signature = crypto.createHmac("sha256", key).update(body).digest("base64");
+
+    var MasterToken = "master";
+    var TokenVersion = "1.0";
+
+    return encodeURIComponent("type=" + MasterToken + "&ver=" + TokenVersion + "&sig=" + signature);
+}
+
+// コマンドライン引数を受け取る
+var args = process.argv.slice(2);
+var verb = args[0];
+var resourceType = args[1];
+var resourceId = args[2];
+var date = args[3];
+var masterKey = args[4];
+
+var token = getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey);
+console.log(token);
+EOS
+```
+
+データベースを作成
+
+```bash
+endpoint="https://localhost:8081/"
+masterKey="C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+dbName="LineApiUseCaseSmartRetail"
+
+verb="post"
+resourceType="dbs"
+resourceLink=""
+date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
+
+# Node.jsスクリプトを実行してトークンを生成
+authHeader=$(node.exe create_cosmos_db_auth_token.js $verb $resourceType $resourceLink "$date" $masterKey)
+
+# データベースを作成するためのJSON本体
+requestBody="{\"id\":\"$dbName\"}"
+
+# データベースを作成
+curl -k -X POST -H "Content-Type: application/json" \
+     -H "x-ms-version: 2017-02-22" \
+     -H "x-ms-date: $date" \
+     -H "Authorization: $authHeader" \
+     --data "$requestBody" \
+     $endpoint"dbs"
+```
+
+コンテナの作成
+
+```bash
+# コンテナを作成する関数
+create_container() {
+    container_name=$1
+    partition_key=$2
+
+    requestBody="{\"id\":\"$container_name\",\"partitionKey\":{\"paths\":[\"$partition_key\"],\"kind\":\"Hash\"}}"
+
+    curl -X POST -H "Content-Type: application/json" \
+         -H "x-ms-version: 2017-02-22" \
+         -H "x-ms-date: $(date -u)" \
+         -H "Authorization: $(echo -n "post\ndbs/$db_name/colls\n\n$(date -u)\n\n" | openssl dgst -sha256 -hmac $masterKey -binary | base64)" \
+         --data "$requestBody" \
+         $endpoint"dbs/$db_name/colls"
+}
+
+# 各コンテナを作成
+create_container "coupons" "/couponId"
+create_container "items" "/barcode"
+create_container "lineChannel" "/channelId"
+```
+
+データの追加
+
+```bash
+# データを追加する関数
+add_data() {
+    container_name=$1
+    data=$2
+
+    curl -X POST -H "Content-Type: application/json" \
+         -H "x-ms-version: 2017-02-22" \
+         -H "x-ms-date: $(date -u)" \
+         -H "Authorization: $(echo -n "post\ndbs/$db_name/colls/$container_name/docs\n\n$(date -u)\n\n" | openssl dgst -sha256 -hmac $masterKey -binary | base64)" \
+         --data "$data" \
+         $endpoint"dbs/$db_name/colls/$container_name/docs"
+}
+
+# couponsコンテナにデータを追加
+add_data "coupons" '{"barcode":"4956022006116", ... }'
+
+# itemsコンテナにデータを追加
+add_data "items" '{"barcode":"4956022006116", ... }'
+add_data "items" '{"barcode":"1230059783947", ... }'
+# 他のアイテムも同様に追加
+
+# lineChannelコンテナにデータを追加
+add_data "lineChannel" '{"channelId":"Messaging APIチャネルのチャネルID", ... }'
+```
