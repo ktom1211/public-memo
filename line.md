@@ -1104,6 +1104,13 @@ create_container() {
     container_name=$1
     partition_key=$2
 
+    verb="post"
+    resourceType="dbs"
+    resourceLink="colls"
+    date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
+
+    authHeader=$(node.exe create_cosmos_db_auth_token.js "$verb" "$resourceType" "$resourceLink" "$date" "$masterKey")
+
     requestBody="{\"id\":\"$container_name\",\"partitionKey\":{\"paths\":[\"$partition_key\"],\"kind\":\"Hash\"}}"
 
     curl -X POST -H "Content-Type: application/json" \
