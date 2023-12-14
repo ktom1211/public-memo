@@ -968,7 +968,7 @@ Import-Certificate -FilePath $cert_path -CertStoreLocation Cert:\LocalMachine\Ro
 {
   "IsEncrypted": false,
   "Host": {
-    "LocalHttpPort": 5000,
+    "LocalHttpPort": 5001,
     "CORS": "*",
     "CORSCredentials": false
   },
@@ -1302,7 +1302,7 @@ ngrokを使ってローカル実行します。
 1. .envの環境変数を適切な値に変更します。
 
 ```:frontend/.env
-BASE_URL=http://localhost:5000
+BASE_URL=http://localhost:5001
 LIFF_ID=<LIFFアプリID>
 ```
 
