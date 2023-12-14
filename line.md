@@ -1034,7 +1034,14 @@ touch create_cosmos_db_auth_token.js
 # Node.js 18.19.0 で実行を想定
 cat << EOS > create_cosmos_db_auth_token.js
 var crypto = require("crypto");  
-  
+
+// Azure Cosmos DBのREST APIを使用する際には、Authorizationヘッダーが必要です。
+// このヘッダーは、特定のリクエストに対する署名を提供します。
+// 以下に、Authorizationヘッダーを生成するために必要な各パラメータの詳細を示します。
+// - verb: これはHTTPメソッド（GET、POST、PUT、DELETEなど）を表します。例えば、データを追加する場合は"POST"を使用します。
+// - resourceType: これは操作対象のリソースの種類を表します。例えば、コンテナを作成する場合は"dbs", データを追加する場合は"docs"を使用します。
+// - resourceLink: これは操作対象のリソースへのリンクを表します。例えば、データベース名がmyDatabaseで、コンテナ名がmyContainerの場合、リソースリンクは"dbs/myDatabase/colls/myContainer"となります。
+// - date: これはリクエストの日付を表します。これはUTCの日付で、RFC 1123形式である必要があります。シェルスクリプトでは$(date -u)を使用して生成できます。
 function getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey) {
     var key = Buffer.from(masterKey, "base64");
 
@@ -1106,7 +1113,7 @@ create_container() {
 
     verb="post"
     resourceType="dbs"
-    resourceLink="dbs/$dbName"
+    resourceLink="dbs/$dbName/colls/$container_name"
     date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
 
     # Node.jsスクリプトを実行してトークンを生成
