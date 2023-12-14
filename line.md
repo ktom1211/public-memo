@@ -1151,49 +1151,10 @@ create_container() {
          $endpoint"dbs/$dbName/colls"
 }
 
-update_index_policy() {
-    local collectionName=$1
-
-    # トークンを生成
-    local authToken=$(node.exe create_cosmos_db_auth_token.js "put" "colls" "dbs/$dbName/colls/$collectionName" "$date" "$masterKey")
-
-    # インデックスポリシーのJSON本体（パーティションキーを除外）
-    local requestBody='{
-        "id": "'$collectionName'",
-        "indexingPolicy": {
-            "indexingMode": "consistent",
-            "automatic": true,
-            "includedPaths": [
-                {
-                    "path": "/*"
-                }
-            ],
-            "excludedPaths": [
-                {
-                    "path": "/\"_etag\"/?"
-                }
-            ]
-        }
-    }'
-
-    # PUTリクエストの送信
-    curl -X PUT -H "Content-Type: application/json" \
-         -H "x-ms-version: 2018-12-31" \
-         -H "x-ms-date: $date" \
-         -H "Authorization: $authToken" \
-         --data "$requestBody" \
-         $endpoint"dbs/$dbName/colls/$collectionName"
-}
-
 # 各コンテナを作成
 create_container "coupons" "/couponId"
 create_container "items" "/barcode"
 create_container "lineChannel" "/channelId"
-
-# インデックスポリシーを更新
-update_index_policy "coupons"
-update_index_policy "items"
-update_index_policy "lineChannel"
 ```
 
 データの追加
@@ -1216,6 +1177,7 @@ add_data_to_container() {
          -H "x-ms-date: $date" \
          -H "Authorization: $authHeader" \
          -H "x-ms-documentdb-partitionkey: [\"$partitionKeyValue\"]" \
+         -H "x-ms-documentdb-is-upsert: true" \
          --data "$data" \
          $endpoint"dbs/$dbName/colls/$containerName/docs"
 }
