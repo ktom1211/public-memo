@@ -1114,26 +1114,31 @@ create_container() {
     local partitionKey=$2
 
     # コンテナを作成するためのJSON本体（インデックスポリシーを省略）
-    local requestBody=`{
-        "id": "'$containerName'",
-        "indexingPolicy": {
-            "indexingMode": "consistent",
-            "automatic": true,
-            "includedPaths": [
-                {
-                    "path": "/*"
-                }
+    local requestBody='{  
+        "id": "'$containerName'",  
+        "indexingPolicy": {  
+            "automatic": true,  
+            "indexingMode": "Consistent",  
+            "includedPaths": [  
+            {  
+                "path": "/*"
+            }  
             ],
             "excludedPaths": [
-                {
-                    "path": "/\"_etag\"/?"
-                }
-            ]
-        }
-    }`
+            {
+                "path": "/\"_etag\"/?"
+            }
+        ]
+        },  
+        "partitionKey": {  
+            "paths": [  
+            "'$partitionKey'"  
+            ],  
+            "kind": "Hash",
+            "Version": 2
+        }  
+    }'
     
-    "{\"id\":\"$containerName\",\"partitionKey\":{\"paths\":[\"$partitionKey\"],\"kind\":\"Hash\"}}"
-
     # トークンを生成
     local authHeader=$(node.exe create_cosmos_db_auth_token.js "post" "colls" "dbs/$dbName" "$date" "$masterKey")
 
