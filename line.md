@@ -1136,9 +1136,11 @@ create_container "lineChannel" "/channelId"
 
 ```bash
 # データを追加する関数
+# データを追加する関数
 add_data_to_container() {
     local containerName=$1
     local data=$2
+    local partitionKeyValue=$3  # パーティションキーの値を追加
 
     # トークンを生成
     local authHeader=$(node.exe create_cosmos_db_auth_token.js "post" "docs" "dbs/$dbName/colls/$containerName" "$date" "$masterKey")
@@ -1148,6 +1150,7 @@ add_data_to_container() {
          -H "x-ms-version: 2017-02-22" \
          -H "x-ms-date: $date" \
          -H "Authorization: $authHeader" \
+         -H "x-ms-documentdb-partitionkey: [\"$partitionKeyValue\"]" \  # パーティションキーヘッダーを追加
          --data "$data" \
          $endpoint"dbs/$dbName/colls/$containerName/docs"
 }
