@@ -1017,21 +1017,5 @@ cat << EOS > backend/LineApiUseCaseSmartRetail/local.settings.json
   }
 }
 ```
-cat << EOS > backend/LineApiUseCaseSmartRetail/local.settings.json
-{
-  "IsEncrypted": false,
-  "Values": {
-    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    "ApplicationOptions__DetailsUrl": "http://localhost/history.html",
-    "LineOptions__ChannelId": "2002193664",
-    "LineOptions__LoginChannelId": "2002193700",
-    "LinePayOptions__ChannelId": "2002143330",
-    "LinePayOptions__ChannelSecret": "bce1d67e2c9166fa7543f4c5e6e49f79",
-    "LinePayOptions__PaymentImageUrl": "http://localhost/dummy",
-    "LinePayOptions__ConfirmUrl": "http://localhost/completed.html",
-    "LinePayOptions__CancelUrl": "http://localhost/smaphregi/",
-    "CosmosDbAccount": "https://localhost:8081/",
-    "CosmosDbKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
-  }
+
 }
