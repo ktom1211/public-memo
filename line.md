@@ -1106,13 +1106,15 @@ curl -k -X POST -H "Content-Type: application/json" \
 コンテナの作成
 
 ```bash
+date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
+
 # コンテナを作成する関数
 create_container() {
     local containerName=$1
     local partitionKey=$2
 
     # コンテナを作成するためのJSON本体
-    local requestBody="{\"id\":\"$containerName\",\"partitionKey\":{\"paths\":[\"$partitionKey\"],\"kind\":\"Hash\"}}"
+    local requestBody="{\"id\":\"$containerName\",\"partitionKey\":{\"paths\":[\"$partitionKey\"],\"kind\":\"Hash\"},\"indexingPolicy\":{\"indexingMode\":\"consistent\",\"automatic\":true,\"includedPaths\":[{\"path\":\"/*\"}],\"excludedPaths\":[{\"path\":\"/\\\"_etag\\\"/?\"}]}}"
 
     # トークンを生成
     local authHeader=$(node.exe create_cosmos_db_auth_token.js "post" "colls" "dbs/$dbName" "$date" "$masterKey")
@@ -1135,7 +1137,8 @@ create_container "lineChannel" "/channelId"
 データの追加
 
 ```bash
-# データを追加する関数
+date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
+
 # データを追加する関数
 add_data_to_container() {
     local containerName=$1
@@ -1150,7 +1153,7 @@ add_data_to_container() {
          -H "x-ms-version: 2017-02-22" \
          -H "x-ms-date: $date" \
          -H "Authorization: $authHeader" \
-         -H "x-ms-documentdb-partitionkey: [\"$partitionKeyValue\"]" \  # パーティションキーヘッダーを追加
+         -H "x-ms-documentdb-partitionkey: [\"$partitionKeyValue\"]" \
          --data "$data" \
          $endpoint"dbs/$dbName/colls/$containerName/docs"
 }
@@ -1169,7 +1172,7 @@ add_data_to_container "coupons" '{
   "imageUrl": "https://media.istockphoto.com/vectors/watermelon-icon-in-trendy-flat-style-isolated-on-white-background-vector-id877064160?s=612x612",
   "itemName": "すいか",
   "remarks": "すいか１点につき、20円引きとなります。"
-}'
+}' "watermelon_coupon"
 
 
 # itemsコンテナにデータを追加
