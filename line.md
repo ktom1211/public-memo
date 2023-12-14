@@ -967,6 +967,11 @@ Import-Certificate -FilePath $cert_path -CertStoreLocation Cert:\LocalMachine\Ro
 ```json:local.settings.json
 {
   "IsEncrypted": false,
+  "Host": {
+    "LocalHttpPort": 5000,
+    "CORS": "*",
+    "CORSCredentials": false
+  },
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
@@ -1305,7 +1310,12 @@ LIFF_ID=<LIFFアプリID>
 
 ```bash
 cd frontend
-npx http-server -p 5000
+# Portとdistのパスを指定して起動
+npm install
+npm run generate
+npx http-server -p 5000 dist
+# 以下でもいいのでは？
+npm run dev -- -H localhost -p 5000
 ```
 
 3. ngrok を使って公開サーバーのURLを発行します。
