@@ -1106,19 +1106,20 @@ create_container() {
 
     verb="post"
     resourceType="dbs"
-    resourceLink="colls"
+    resourceLink="dbs/$dbName"
     date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
 
+    # Node.jsスクリプトを実行してトークンを生成
     authHeader=$(node.exe create_cosmos_db_auth_token.js "$verb" "$resourceType" "$resourceLink" "$date" "$masterKey")
 
     requestBody="{\"id\":\"$container_name\",\"partitionKey\":{\"paths\":[\"$partition_key\"],\"kind\":\"Hash\"}}"
 
-    curl -X POST -H "Content-Type: application/json" \
-         -H "x-ms-version: 2017-02-22" \
-         -H "x-ms-date: $(date -u)" \
-         -H "Authorization: $(echo -n "post\ndbs/$db_name/colls\n\n$(date -u)\n\n" | openssl dgst -sha256 -hmac $masterKey -binary | base64)" \
-         --data "$requestBody" \
-         $endpoint"dbs/$db_name/colls"
+    curl -k -X POST -H "Content-Type: application/json" \
+        -H "x-ms-version: 2017-02-22" \
+        -H "x-ms-date: $date" \
+        -H "Authorization: $authHeader" \
+        --data "$requestBody" \
+        $endpoint"dbs/$dbName/colls"
 }
 
 # 各コンテナを作成
