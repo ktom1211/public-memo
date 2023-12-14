@@ -1168,6 +1168,12 @@ add_data_to_container() {
     local data=$2
     local partitionKeyValue=$3  # パーティションキーの値を追加
 
+    # UUIDを生成
+    local docId=$(powershell -Command "[guid]::NewGuid().ToString()")
+
+    # データにUUIDを追加
+    local modifiedData=$(echo $data | jq --arg docId "$docId" '. + {id: $docId}')
+
     # トークンを生成
     local authHeader=$(node.exe create_cosmos_db_auth_token.js "post" "docs" "dbs/$dbName/colls/$containerName" "$date" "$masterKey")
 
@@ -1177,15 +1183,13 @@ add_data_to_container() {
          -H "x-ms-date: $date" \
          -H "Authorization: $authHeader" \
          -H "x-ms-documentdb-partitionkey: [\"$partitionKeyValue\"]" \
-         -H "x-ms-documentdb-is-upsert: True" \
-         --data "$data" \
+         --data "$modifiedData" \
          $endpoint"dbs/$dbName/colls/$containerName/docs"
 }
 
 
 # couponsコンテナにデータを追加
 add_data_to_container "coupons" '{
-  "id": "123",
   "barcode": "4956022006116",
   "couponDescription": "【感謝価格】すいか20%割引",
   "couponId": "watermelon_coupon",
