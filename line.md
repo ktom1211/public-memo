@@ -944,8 +944,8 @@ $webClient = New-Object System.Net.WebClient
 $webClient.DownloadFile($cert_url, $cert_path)
 
 # 証明書のインストール
-# Import-Certificate -FilePath $cert_path -CertStoreLocation Cert:\LocalMachine\Root
-certutil -addstore -f "Root" $cert_path
+Import-Certificate -FilePath $cert_path -CertStoreLocation Cert:\LocalMachine\Root
+# certutil -addstore -f "Root" $cert_path # でもたぶんOK
 ```
 
 ローカル管理画面にアクセス
