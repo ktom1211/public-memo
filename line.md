@@ -746,13 +746,13 @@ npm install
 # https://v2.nuxt.com/deployments/azure-static-web-apps/
 npm run generate
 
-cd..
+cd ..
 ```
 
 3. デプロイを行います。
 
 ```bash
-deployment_token=<デプロイトークン>
+cd ..deployment_token=<デプロイトークン>
 # deployment_token=$(az staticwebapp secrets list --name <Azure Static Web Appsのアプリ名> --query "properties.apiKey" -o tsv)
 npx @azure/static-web-apps-cli deploy --env production --deployment-token ${deployment_token}
 ``` 
