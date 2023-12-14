@@ -1031,27 +1031,27 @@ REAT API用の認証トークンを生成するNode.jsスクリプトを作成
 touch create_cosmos_db_auth_token.js
 
 # Node.jsスクリプトに値を設定
+# Node.js 18.19.0 で実行を想定
 cat << EOS > create_cosmos_db_auth_token.js
 var crypto = require("crypto");  
   
-function getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey) {  
-    var key = new Buffer(masterKey, "base64");  
-  
-    var text = (verb || "").toLowerCase() + "\n" +   
-               (resourceType || "").toLowerCase() + "\n" +   
-               (resourceId || "") + "\n" +   
-               date.toLowerCase() + "\n" +   
-               "" + "\n";  
-  
-    var body = new Buffer(text, "utf8");  
-    var signature = crypto.createHmac("sha256", key).update(body).digest("base64");  
-  
-    var MasterToken = "master";  
-  
-    var TokenVersion = "1.0";  
-  
-    return encodeURIComponent("type=" + MasterToken + "&ver=" + TokenVersion + "&sig=" + signature);  
-}  
+function getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey) {
+    var key = Buffer.from(masterKey, "base64");
+
+    var text = (verb || "").toLowerCase() + "\n" +
+               (resourceType || "").toLowerCase() + "\n" +
+               (resourceId || "") + "\n" +
+               date.toLowerCase() + "\n" +
+               "" + "\n";
+
+    var body = Buffer.from(text, "utf8");
+    var signature = crypto.createHmac("sha256", key).update(body).digest("base64");
+
+    var MasterToken = "master";
+    var TokenVersion = "1.0";
+
+    return encodeURIComponent("type=" + MasterToken + "&ver=" + TokenVersion + "&sig=" + signature);
+}
 
 // コマンドライン引数を受け取る
 var args = process.argv.slice(2);
@@ -1061,8 +1061,15 @@ var resourceId = args[2];
 var date = args[3];
 var masterKey = args[4];
 
+console.log("verb: " + verb);
+console.log("resourceType: " + resourceType);
+console.log("resourceId: " + resourceId);
+console.log("date: " + date);
+console.log("masterKey: " + masterKey);
+
 var token = getAuthorizationTokenUsingMasterKey(verb, resourceType, resourceId, date, masterKey);
-console.log(token);
+
+console.log("token: " + token);
 EOS
 ```
 
@@ -1072,6 +1079,9 @@ EOS
 endpoint="https://localhost:8081/"
 masterKey="C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
 dbName="LineApiUseCaseSmartRetail"
+
+# 認証トークンを生成
+authToken=$(node.exe create_cosmos_db_auth_token.js "post" "dbs" "" "$(date -u)" $masterKey)
 
 verb="post"
 resourceType="dbs"
