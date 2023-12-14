@@ -1018,3 +1018,14 @@ cat << EOS > backend/src/LineApiUseCaseSmartRetail/local.settings.json
 }
 EOS
 ```
+
+2. Cosmos DBへのマスタデータ登録
+
+[2-5-3-2-2 Cosmos DBへのマスタデータ登録](#2-5-3-2-2-cosmos-dbへのマスタデータ登録)の[2. データベースとコンテナの作成]と[3. データの追加]をローカルで実施します。
+
+```bash
+# データベースの作成
+db_key=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+db_url=https://localhost:8081
+db_name=LineApiUseCaseSmartRetail
+az cosmosdb sql database create --key $db_key --db-name $db_name --url-connection "https://localhost:8081"
