@@ -1108,25 +1108,22 @@ curl -k -X POST -H "Content-Type: application/json" \
 ```bash
 # コンテナを作成する関数
 create_container() {
-    container_name=$1
-    partition_key=$2
+    local containerName=$1
+    local partitionKey=$2
 
-    verb="post"
-    resourceType="dbs"
-    resourceLink="dbs/$dbName/colls/$container_name"
-    date=$(date -u "+%a, %d %b %Y %H:%M:%S GMT")
+    # コンテナを作成するためのJSON本体
+    local requestBody="{\"id\":\"$containerName\",\"partitionKey\":{\"paths\":[\"$partitionKey\"],\"kind\":\"Hash\"}}"
 
-    # Node.jsスクリプトを実行してトークンを生成
-    authHeader=$(node.exe create_cosmos_db_auth_token.js "$verb" "$resourceType" "$resourceLink" "$date" "$masterKey")
+    # トークンを生成
+    local authHeader=$(node.exe create_cosmos_db_auth_token.js "post" "colls" "dbs/$dbName" "$date" "$masterKey")
 
-    requestBody="{\"id\":\"$container_name\",\"partitionKey\":{\"paths\":[\"$partition_key\"],\"kind\":\"Hash\"}}"
-
+    # コンテナを作成
     curl -k -X POST -H "Content-Type: application/json" \
-        -H "x-ms-version: 2017-02-22" \
-        -H "x-ms-date: $date" \
-        -H "Authorization: $authHeader" \
-        --data "$requestBody" \
-        $endpoint"dbs/$dbName/colls"
+         -H "x-ms-version: 2017-02-22" \
+         -H "x-ms-date: $date" \
+         -H "Authorization: $authHeader" \
+         --data "$requestBody" \
+         $endpoint"dbs/$dbName/colls"
 }
 
 # 各コンテナを作成
@@ -1139,26 +1136,82 @@ create_container "lineChannel" "/channelId"
 
 ```bash
 # データを追加する関数
-add_data() {
-    container_name=$1
-    data=$2
+add_data_to_container() {
+    local containerName=$1
+    local data=$2
 
-    curl -X POST -H "Content-Type: application/json" \
+    # トークンを生成
+    local authHeader=$(node.exe create_cosmos_db_auth_token.js "post" "docs" "dbs/$dbName/colls/$containerName" "$date" "$masterKey")
+
+    # データを追加
+    curl -k -X POST -H "Content-Type: application/json" \
          -H "x-ms-version: 2017-02-22" \
-         -H "x-ms-date: $(date -u)" \
-         -H "Authorization: $(echo -n "post\ndbs/$db_name/colls/$container_name/docs\n\n$(date -u)\n\n" | openssl dgst -sha256 -hmac $masterKey -binary | base64)" \
+         -H "x-ms-date: $date" \
+         -H "Authorization: $authHeader" \
          --data "$data" \
-         $endpoint"dbs/$db_name/colls/$container_name/docs"
+         $endpoint"dbs/$dbName/colls/$containerName/docs"
 }
 
+
 # couponsコンテナにデータを追加
-add_data "coupons" '{"barcode":"4956022006116", ... }'
+add_data_to_container "coupons" '{
+  "barcode": "4956022006116",
+  "couponDescription": "【感謝価格】すいか20%割引",
+  "couponId": "watermelon_coupon",
+  "deleted": "",
+  "discountEndDatetime": "2022-12-31 23:59:000",
+  "discountRate": 20,
+  "discountStartDatetime": "2021-04-01 00:00:000",
+  "discountWay": 2,
+  "imageUrl": "https://media.istockphoto.com/vectors/watermelon-icon-in-trendy-flat-style-isolated-on-white-background-vector-id877064160?s=612x612",
+  "itemName": "すいか",
+  "remarks": "すいか１点につき、20円引きとなります。"
+}'
+
 
 # itemsコンテナにデータを追加
-add_data "items" '{"barcode":"4956022006116", ... }'
-add_data "items" '{"barcode":"1230059783947", ... }'
-# 他のアイテムも同様に追加
+add_data_to_container "items" '{
+  "barcode": "4956022006116",
+  "imageUrl": "https://media.istockphoto.com/vectors/watermelon-icon-in-trendy-flat-style-isolated-on-white-background-vector-id877064160?s=612x612",
+  "itemName": "すいか",
+  "itemPrice": 100
+}'
+
+add_data_to_container "items" '{
+  "barcode": "1230059783947",
+  "imageUrl": "https://media.gettyimages.com/vectors/stack-of-books-vector-id504374218?s=2048x2048",
+  "itemName": "書籍",
+  "itemPrice": 100
+}'
+
+add_data_to_container "items" '{
+  "barcode": "2130627341496",
+  "imageUrl": "https://media.gettyimages.com/vectors/tomato-flat-design-vegetable-icon-vector-id1017915086?s=2048x2048",
+  "itemName": "とまと",
+  "itemPrice": 50
+}'
+
+add_data_to_container "items" '{
+  "barcode": "8358328475935",
+  "imageUrl": "https://media.gettyimages.com/vectors/stack-of-books-vector-id504374218?s=2048x2048",
+  "itemName": "書籍",
+  "itemPrice": 100
+}'
+
+add_data_to_container "items" '{
+  "barcode": "84895769",
+  "imageUrl": "https://media.istockphoto.com/vectors/simple-apple-in-flat-style-vector-illustration-vector-id1141529240?s=612x612",
+  "itemName": "りんご",
+  "itemPrice": 50
+}'
+
 
 # lineChannelコンテナにデータを追加
-add_data "lineChannel" '{"channelId":"Messaging APIチャネルのチャネルID", ... }'
+add_data_to_container "lineChannel" '{
+    "channelId": "Messaging APIチャネルのチャネルID",
+    "channelSecret": "Messaging APIチャネルのチャネルシークレット",
+    "channelAccessToken": "Messaging APIチャネルのチャネルトークン",
+    "limitDate": "2021-01-01T00:00:00.0000000+00:00",
+    "updatedTime": "2021-01-01T00:00:00.0000000+00:00"
+}'
 ```
