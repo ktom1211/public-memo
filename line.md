@@ -1318,6 +1318,10 @@ npx http-server -p 5000 dist
 npm run dev -- -H localhost -p 5000
 ```
 
+```bash
+npx @azure/static-web-apps-cli start http://localhost:5000 --run "cd frontend && npm run dev -- -p 5000" --api-location ./backend
+```
+
 3. ngrok を使って公開サーバーのURLを発行します。
 
 ```bas
