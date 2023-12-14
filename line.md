@@ -988,7 +988,7 @@ Import-Certificate -FilePath $cert_path -CertStoreLocation Cert:\LocalMachine\Ro
 
 ```bash
 # local.settings.json ファイル生成
-touch backend/LineApiUseCaseSmartRetail/local.settings.json
+touch backend/src/LineApiUseCaseSmartRetail/local.settings.json
 
 # local.settings.json ファイルに値を設定
 # LINEチャネルID
@@ -998,7 +998,7 @@ touch backend/LineApiUseCaseSmartRetail/local.settings.json
 # http://localhost/~ のものが該当
 # CosmosDbAccount Cosmos DBのアカウントURL(ローカルでCosmosDBエミュレータを使う場合はテンプレートファイルのままでOK)
 # CosmosDbKey Cosmos DBのキー(ローカルでCosmosDBエミュレータを使う場合はテンプレートファイルのままでOK)
-cat << EOS > backend/LineApiUseCaseSmartRetail/local.settings.json
+cat << EOS > backend/src/LineApiUseCaseSmartRetail/local.settings.json
 {
   "IsEncrypted": false,
   "Values": {
@@ -1016,6 +1016,5 @@ cat << EOS > backend/LineApiUseCaseSmartRetail/local.settings.json
     "CosmosDbKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
   }
 }
+EOS
 ```
-
-}
