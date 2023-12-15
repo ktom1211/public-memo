@@ -605,13 +605,13 @@ Bash on Windows で実行するとパスの形式が異なるため、エラー�
 ```bash
 # 任意のグループ名を指定してください。
 rg=demo-linesmartretail
-az group create -n $rg -l japaneast
+az group create -n $rg -l eastasia
 az deployment group create -g $rg --template-file main.bicep
 ```
 
 ```powershell
 $rg = "demo-linesmartretail"
-az group create -n $rg -l japaneast
+az group create -n $rg -l eastasia
 az deployment group create -g $rg --template-file main.bicep
 ```
 
