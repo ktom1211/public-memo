@@ -1344,4 +1344,71 @@ ngrok http 5000
 - Azure Static Web Apps
     - React
     - Azure Functions
-    - 
+    - Cosmos DB
+
+## 3-2 LINEチャネルの作成
+
+1. [LINE Developersコンソール](https://developers.line.biz/console/)にログインします。
+
+2. [プロバイダーを作成します。](https://developers.line.biz/ja/docs/liff/getting-started/#step-one-create-provider)
+
+3. 作成してプロバイダーを選択し、[LINEミニアプリチャネルを作成します。](https://developers.line.biz/ja/docs/line-mini-app/develop/develop-overview/#create-line-mini-app-channel)
+
+**一度作成したチャネルを、後から他のプロバイダーに移動することはできません。**
+
+新規チャンネル作成画面で、以下の項目を入力し作成します。
+
+- チャンネル種類: LINEミニアプリ（変更なし）
+- プロバイダー: 選択したプロバイダー名（変更なし）
+- サービスを提供する地域: 日本（変更なし）
+- チャンネルアイコン: 任意の画像
+    - LINEミニアプリのアイコンです。
+    - 正方形の画像をアップロードすると、アイコンの形状（角丸）に合わせて自動的にトリミングされます。
+    - LINEミニアプリのアイコンに関する詳細は[アイコンガイドライン](https://developers.line.biz/ja/docs/line-mini-app/design/line-mini-app-icon/)を参照してください。
+        - PNG, JPG, JPEG
+        - 3 MB以内
+        - 130 x 130ピクセル
+- チャンネル名: 任意のチャンネル名
+    - LINEミニアプリの名前として使用されます。
+    - 20文字以内
+- チャンネル説明: 任意のチャンネル説明
+    - [同意画面](https://developers.line.biz/ja/docs/line-mini-app/discover/builtin-features/#consent-screen)に表示されます。
+    - 審査時にサービス概要を把握するために使用されるので、必ず記載してください。
+    - LINEミニアプリの開発担当企業とサービス事業主が異なる場合は、ユーザーに対して、チャネル同意画面およびプライバシーポリシーページで通知してください。
+        - [LINEミニアプリポリシー](https://terms2.line.me/LINE_MINI_App?lang=ja#company-information)の「企業に関する情報」を参照してください。
+    - 300文字以内
+- メールアドレス: 任意のメールアドレス
+    - チャネルに関する重要な更新や審査結果がこちらのメールアドレスに送信されます。
+- サービス利用規約URL: 任意のサービス利用規約URL
+
+上記を入力し、以下の同意にチェックを入れて[作成]をクリックします。
+
+- [LINE開発者契約](https://terms2.line.me/LINE_Developers_Agreement?lang=ja)
+- [LINEミニアプリプラットフォーム規約](https://terms2.line.me/LINE_Developers_MINI_App_JP?country=JP&lang=ja)
+- 「LINEミニアプリを提供する地域と、サービス事業主の所在国・地域が同一であることを表明し、保証します。」
+- 「これらの規約に同意すること及びこれらの契約を締結することについて、会社を代表する必要かつ正当な権限を有していることを表明し、保証します。入力及び操作を行う者が開発受託会社（開発担当企業）の場合は、これらの規約に同意し、これらの規約に基づく契約を締結すること及び以降の必要な操作設定を行うことについてプロバイダーの代理として必要かつ正当な権限を有していることを表明し、保証します。」
+
+「情報利用に関する同意について」の画面が表示さ、内容を確認後「同意する」をクリックします。
+
+LINEミニアプリチャネルが作成され、ステータスが「開発中」になります。
+
+作成後、チャンネル基本設定画面で以下の項目が追加で設定できます。
+
+- プライバシーポリシーURL
+    - [LINEミニアプリポリシー](https://terms2.line.me/LINE_MINI_App?lang=ja#company-information)の「プライバシーポリシーページ」を参照してください。
+- 機能カテゴリ
+    - 買い物、注文などが選択できるが何に使用される？
+- チャネルアイコン
+- アサーション署名キー
+    - [チャネルアクセストークンv2.1を発行する](https://developers.line.biz/ja/docs/messaging-api/generate-json-web-token/#page-title)
+- 多言語対応
+    - 「チャネル名」と「チャネル説明」を多言語で入力できます。
+- リンクされたLINE公式アカウント
+    - LINEミニアプリとリンクするLINE公式アカウントを選択できます。
+    - LINE公式アカウントがMessaging API機能を利用しており、同じプロバイダー内にMessaging APIチャネルとして存在している場合のみ使用できます。
+- メールアドレス取得権限
+    - この権限を申請すると、OpenID Connectを使用して、ユーザーのメールアドレスを要求できます。
+
+## 3-3 アプリの作成
+
+もっとも簡単に作成するには[]()を使用します。
