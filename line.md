@@ -605,13 +605,13 @@ Bash on Windows で実行するとパスの形式が異なるため、エラー�
 ```bash
 # 任意のグループ名を指定してください。
 rg=demo-linesmartretail
-az group create -n $rg -l eastasia
+az group create -n $rg -l japaneast
 az deployment group create -g $rg --template-file main.bicep
 ```
 
 ```powershell
 $rg = "demo-linesmartretail"
-az group create -n $rg -l eastasia
+az group create -n $rg -l japaneast
 az deployment group create -g $rg --template-file main.bicep
 ```
 
@@ -1459,3 +1459,45 @@ Node.js 17以降で導入されたOpenSSL 3.0の変更により、一部の暗�
 yarn install
 yarn dev
 ```
+
+5. サーバーへのデプロイ
+
+Azure Static Web Appsにデプロイします。
+
+Azure Static Web Appsを登録します。
+
+ログイン
+
+```bash
+az login
+```
+
+リソースグループの作成
+
+```bash
+RESOURCE_GROUP=<Azure Static Web Appsのリソースグループ名>
+
+az group create \
+    --name $RESOURCE_GROUP \
+    --location "japaneast"
+```
+
+Azure Static Web Appsのアプリの作成
+```bash
+
+```bash
+APP_NAME=<Azure Static Web Appsのアプリ名>
+RESOURCE_GROUP=<Azure Static Web Appsのリソースグループ名>
+
+az staticwebapp create \
+    --name $APP_NAME \
+    --resource-group $RESOURCE_GROUP \
+    --location "japaneast"
+```
+
+[Static Web Apps (SWA) CLI](https://azure.github.io/static-web-apps-cli/docs/intro)をインストールします。
+
+```bash
+npm install -D @azure/static-web-apps-cli
+```
+
