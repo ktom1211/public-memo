@@ -1436,7 +1436,24 @@ $ cd line-liff-v2-starter/src/vanilla
 
 Next.jsは`cd line-liff-v2-starter/src/nextjs`、Nuxt.jsは`cd line-liff-v2-starter/src/nuxtjs`を使用します。
 
-3. ローカルサーバーを起動します。
+3. OpenSSL互換エラーの対応を行う。
+
+Node.js 17以降で導入されたOpenSSL 3.0の変更により、一部の暗号化関連の機能がサポートされなくなったため、そのままではビルドが通らない。
+本当はNode.js 18対応のバージョン上げたほうがいいけども（Nuxt 17.2？未検証）、環境変数の設定で対応する。
+
+```diff
+# package.json
+{
+  "scripts": {
+-    "dev": "cross-env NODE_ENV=development webpack-dev-server --progress",
++    "dev": "cross-env NODE_ENV=development NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --progress",
+-    "build": "cross-env NODE_ENV=production webpack"
++    "build": "cross-env NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack"
+  }
+}
+```
+
+4. ローカルサーバーを起動します。
 
 ```bash
 yarn install
