@@ -1339,11 +1339,18 @@ ngrok http 5000
 
 # 3 試作アプリを構築する
 
+開発に先立ちまずは以下のドキュメントを読んでください。
+- [LINEミニアプリ用LINE Developersコンソールガイド](https://developers.line.biz/ja/docs/line-mini-app/discover/console-guide/)
+- [LINEミニアプリ > 開発を始めよう](https://developers.line.biz/ja/docs/line-mini-app/develop/develop-overview/#page-title)
+
+
 ## 3-1 技術選定
 
 - Azure Static Web Apps
     - React
+        - Node.js 20
     - Azure Functions
+        - .NET 8
     - Cosmos DB
 
 ## 3-2 LINEチャネルの作成
@@ -1411,4 +1418,27 @@ LINEミニアプリチャネルが作成され、ステータスが「開発中�
 
 ## 3-3 アプリの作成
 
-もっとも簡単に作成するには[]()を使用します。
+試作であれば[LIFFスターターアプリを試してみる](https://developers.line.biz/ja/docs/liff/trying-liff-app/)を使用すると良いでしょう。
+
+### 3-3-0 [LIFFスターターアプリを試してみる](https://developers.line.biz/ja/docs/liff/trying-liff-app/)
+
+1. LIFFスターターアプリのソースコードをダウンロードします。
+
+```bash
+git clone https://github.com/line/line-liff-v2-starter.git
+```
+
+2. vanilla JavaScript版のソースコードを開きます。
+
+```bash
+$ cd line-liff-v2-starter/src/vanilla
+```
+
+Next.jsは`cd line-liff-v2-starter/src/nextjs`、Nuxt.jsは`cd line-liff-v2-starter/src/nuxtjs`を使用します。
+
+3. ローカルサーバーを起動します。
+
+```bash
+yarn install
+yarn dev
+```
