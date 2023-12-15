@@ -1336,3 +1336,12 @@ ngrok http 5000
 4. LIFFアプリのエンドポイントURLをngrokが発行したURLに設定します。
 
 5. functionsを起動後、LIFF URLに遷移します。
+
+# 3 試作アプリを構築する
+
+## 3-1 技術選定
+
+- Azure Static Web Apps
+    - React
+    - Azure Functions
+    - 
