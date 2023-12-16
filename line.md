@@ -1483,7 +1483,6 @@ az group create \
 ```
 
 Azure Static Web Appsのアプリの作成
-```bash
 
 ```bash
 APP_NAME=<Azure Static Web Appsのアプリ名>
@@ -1492,7 +1491,7 @@ RESOURCE_GROUP=<Azure Static Web Appsのリソースグループ名>
 az staticwebapp create \
     --name $APP_NAME \
     --resource-group $RESOURCE_GROUP \
-    --location "japaneast"
+    --location "eastasia"
 ```
 
 [Static Web Apps (SWA) CLI](https://azure.github.io/static-web-apps-cli/docs/intro)をインストールします。
