@@ -1506,6 +1506,32 @@ az staticwebapp create \
 npm install -D @azure/static-web-apps-cli
 ```
 
+SWAの構成ファイルを作成します。
+
 ```bash
-npm run swa init
+npm exec swa init
+```
+
+ローカルサーバーを起動します。
+
+```bash
+npm exec swa start
+```
+
+ビルドします。
+
+```bash
+npm exec swa build -- --auto
+```
+
+`swa deploy`コマンドを使用してAzureで認証し、Azure Static Web Appsへのデプロイに使用できるデプロイメントトークンを取得します。
+
+```bash
+npm exec swa login
+```
+
+```bash
+SWA_CLI_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list --name $APP_NAME --query "properties.apiKey")
+# SWA_CLI_DEPLOYMENT_TOKEN=$(npm exec swa deploy -- --print-token | awk '/Deployment token:/{getline; print}')
+npm exec swa deploy -- --deployment-token $SWA_CLI_DEPLOYMENT_TOKEN --verbose=silly
 ```
