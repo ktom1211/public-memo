@@ -1462,8 +1462,8 @@ npm install -D cross-env
 4. ローカルサーバーを起動します。
 
 ```bash
-yarn install
-yarn dev
+npm install
+npm run dev
 ```
 
 5. サーバーへのデプロイ
@@ -1506,3 +1506,6 @@ az staticwebapp create \
 npm install -D @azure/static-web-apps-cli
 ```
 
+```bash
+npm run swa init
+```
