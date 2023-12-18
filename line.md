@@ -1512,6 +1512,25 @@ SWAの構成ファイルを作成します。
 npm exec swa init
 ```
 
+`swa-cli.config.json`を修正します。
+
+```json:swa-cli.config.json
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    <プロジェクト名>: {
+      "appLocation": ".",
+      "outputLocation": "out",
+      "appBuildCommand": "npm run build",
+      "run": "npm run dev",
+      "appDevserverUrl": "http://localhost:9000",
+      "appName": <Azure Static Web Appsのアプリ名>,
+      "resourceGroup": <Azure Static Web Appsのリソースグループ名>
+    }
+  }
+}
+```
+
 ローカルサーバーを起動します。
 
 ```bash
@@ -1519,6 +1538,7 @@ npm exec swa start
 ```
 
 ビルドします。
+[Azure Static Web Apps に Next.js Web サイトをデプロイする](https://learn.microsoft.com/ja-jp/azure/static-web-apps/nextjs)
 
 ```bash
 npm exec swa build
