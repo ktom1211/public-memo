@@ -1521,7 +1521,7 @@ npm exec swa start
 ビルドします。
 
 ```bash
-npm exec swa build -- --auto
+npm exec swa build
 ```
 
 `swa deploy`コマンドを使用してAzureで認証し、Azure Static Web Appsへのデプロイに使用できるデプロイメントトークンを取得します。
