@@ -1555,3 +1555,14 @@ SWA_CLI_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list --name $APP_NAME --query
 # SWA_CLI_DEPLOYMENT_TOKEN=$(npm exec swa deploy -- --print-token | awk '/Deployment token:/{getline; print}')
 npm exec swa deploy -- --deployment-token $SWA_CLI_DEPLOYMENT_TOKEN --verbose=silly
 ```
+
+6. LIFF IDの取得・設定
+
+作成したLINEミニアプリチャネルのLIFF IDを取得します。
+LINEミニアプリチャネルの[LIFF]タブを開き、開発用のLIFF URLの`https://miniapp.line.me/<LIFE ID>`の`<LIFE ID>`部分をコピーします。
+
+取得したLIFF IDを`.env`に設定します。
+
+```bash
+echo "LIFF_ID=<LIFF ID>" >> .env
+```
