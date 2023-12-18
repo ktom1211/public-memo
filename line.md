@@ -1564,5 +1564,12 @@ LINEミニアプリチャネルの[LIFF]タブを開き、開発用のLIFF URL�
 取得したLIFF IDを`.env`に設定します。
 
 ```bash
-echo "LIFF_ID=<LIFF ID>" >> .env
+echo "NEXT_PUBLIC_LIFF_ID=<LIFF ID>" >> .env
+```
+
+ビルド、デプロイします。
+
+```bash
+npm exec swa build
+npm exec swa deploy -- --deployment-token $SWA_CLI_DEPLOYMENT_TOKEN --verbose=silly
 ```
