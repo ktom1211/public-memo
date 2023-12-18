@@ -1431,10 +1431,10 @@ git clone https://github.com/line/line-liff-v2-starter.git
 2. vanilla JavaScript版のソースコードを開きます。
 
 ```bash
-$ cd line-liff-v2-starter/src/vanilla
+$ cd line-liff-v2-starter/src/nextjs
 ```
 
-Next.jsは`cd line-liff-v2-starter/src/nextjs`、Nuxt.jsは`cd line-liff-v2-starter/src/nuxtjs`を使用します。
+Vanilla JSは`cd line-liff-v2-starter/src/vanilla`、Nuxt.jsは`cd line-liff-v2-starter/src/nuxtjs`を使用します。
 
 3. OpenSSL互換エラーの対応を行う。
 
@@ -1442,13 +1442,19 @@ Node.js 17以降で導入されたOpenSSL 3.0の変更により、一部の暗�
 本当はNode.js 18対応のバージョン上げたほうがいいけども（Nuxt 17.2？未検証）、環境変数の設定で対応する。
 
 ```diff
+npm install -D cross-env
+```
+
+```diff
 # package.json
 {
   "scripts": {
--    "dev": "cross-env NODE_ENV=development webpack-dev-server --progress",
-+    "dev": "cross-env NODE_ENV=development NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --progress",
--    "build": "cross-env NODE_ENV=production webpack"
-+    "build": "cross-env NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack"
+-    "dev": "next dev -p 9000",
++    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider next dev -p 9000",
+-    "build": "next build",
++    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider next build",
+-    "start": "next start",
++    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider next start",
   }
 }
 ```
