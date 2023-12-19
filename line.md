@@ -1605,10 +1605,6 @@ npm exec swa deploy -- --deployment-token $SWA_CLI_DEPLOYMENT_TOKEN --verbose=si
 
 以下のツールをインストールします。
 
-- Visual Studio Code
-    - Version 1.85.1
-- Visual Studio Community 2022
-    - Version 17.8.1
 - Git for Windows
     - Version 2.41.0.windows.3
 - Docker Desktop
@@ -1617,6 +1613,10 @@ npm exec swa deploy -- --deployment-token $SWA_CLI_DEPLOYMENT_TOKEN --verbose=si
     - Version 20.10.0
 - pnpm
     - Version 8.12.1
+- Visual Studio Code
+    - Version 1.85.1
+- .NET SDK 6
+    - `winget install Microsoft.DotNet.SDK.6`
 - Azure CLI
     - Version 2.55.0
 
