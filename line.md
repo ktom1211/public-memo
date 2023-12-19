@@ -1573,3 +1573,67 @@ echo "NEXT_PUBLIC_LIFF_ID=<LIFF ID>" >> .env
 npm exec swa build
 npm exec swa deploy -- --deployment-token $SWA_CLI_DEPLOYMENT_TOKEN --verbose=silly
 ```
+
+### 3-3-1 新規に作成する
+
+#### 3-3-1-1 技術選定
+
+- React
+    - Node.js 20
+    - Next.jsを使用はオーバースペックなのでViteを使用する
+        - 複数ページの構成になった場合はルーティングの問題が出てくる
+            - [React Router](https://reactrouter.com/en/main)が良さそう
+- TypeScript
+- [Vite](https://ja.vitejs.dev/)
+    - Vue.jsの開発者であるEvan You氏によって開発されたフロントエンド開発ツール（モジュールバンドラー）
+    - React、Vue、Preactなどをサポート
+    - 高速な起動、更新が可能
+    - TypeScriptなどをサポート
+        - トランスパイルを実行し、型チェックは実行しない
+        - 型チェックはIDEなどのツールに任せる
+        - [Features | Vite](https://vitejs.dev/guide/features.html)
+- [Azure Static Web Apps](https://learn.microsoft.com/ja-jp/azure/static-web-apps/)
+- [Azure Functions](https://learn.microsoft.com/ja-jp/azure/azure-functions/)
+    - .NET 6
+        - マネージド関数使用の場合は.NET 6 or 7
+        - [Azure Functions による Azure Static Web Apps での API のサポート](https://learn.microsoft.com/ja-jp/azure/static-web-apps/apis-functions)
+- Cosmos DB
+
+#### 3-3-1-2 環境準備
+
+このドキュメント作成時の環境はWindows 11 Home 23H2です。
+
+以下のツールをインストールします。
+
+- Visual Studio Code
+    - Version 1.85.1
+- Visual Studio Community 2022
+    - Version 17.8.1
+- Git for Windows
+    - Version 2.41.0.windows.3
+- Docker Desktop
+    - Version 4.25.2 (129061)
+- Node.js 20
+    - Version 20.10.0
+- pnpm
+    - Version 8.12.1
+- Azure CLI
+    - Version 2.55.0
+
+#### 3-3-1-3 プロジェクトの作成
+
+```bash
+APE_NAME=<アプリ名>
+
+# ViteのReact+TypeScript+SWCのテンプレートを使用
+pnpm create vite $APE_NAME --template react-swc-ts
+
+cd $APE_NAME
+
+# プロジェクトの初期化
+pnpm install
+
+# ローカルサーバーを起動
+# pnpm dev
+```
+
